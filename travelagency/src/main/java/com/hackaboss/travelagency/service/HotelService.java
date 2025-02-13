@@ -1,8 +1,7 @@
 package com.hackaboss.travelagency.service;
 
-import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
-import com.hackaboss.travelagency.mapper.HotelMapper;
-import com.hackaboss.travelagency.model.Hotel;
+import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
+import com.hackaboss.travelagency.mapper.HotelBookingMapper;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,19 +12,19 @@ import java.util.List;
 public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
-    private final HotelMapper hotelMapper;
+    private final HotelBookingMapper hotelBookingMapper;
 
     @Autowired
-    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper) {
+    public HotelService(HotelRepository hotelRepository, HotelBookingMapper hotelBookingMapper) {
         this.hotelRepository = hotelRepository;
-        this.hotelMapper = hotelMapper;
+        this.hotelBookingMapper = hotelBookingMapper;
     }
 
 
     @Override
-    public List<HotelDTOResponse> findAll() {
+    public List<HotelBookingDTOResponse> findAll() {
         return hotelRepository.findAll().stream()
-                .map(hotelMapper::toDTO)
+                .map(hotelBookingMapper::toDTO)
                 .toList();
     }
 }

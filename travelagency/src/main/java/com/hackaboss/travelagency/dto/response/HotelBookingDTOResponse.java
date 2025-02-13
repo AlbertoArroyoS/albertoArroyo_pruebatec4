@@ -1,9 +1,13 @@
 package com.hackaboss.travelagency.dto.response;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
-
-public class HotelDTOResponse {
+@Data
+@Builder
+public class HotelBookingDTOResponse {
 
     private LocalDateTime dateFrom;
     private LocalDateTime dateTo;

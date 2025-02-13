@@ -1,11 +1,11 @@
 package com.hackaboss.travelagency.service;
 
-import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
+import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 
 import java.util.List;
 
 public interface IHotelService {
 
-    List<HotelDTOResponse> findAll();
+    List<HotelBookingDTOResponse> findAll();
 
 }
