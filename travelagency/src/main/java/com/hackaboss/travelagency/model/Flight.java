@@ -1,40 +1,51 @@
 package com.hackaboss.travelagency.model;
 
+import com.hackaboss.travelagency.model.base.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.type.descriptor.java.BooleanJavaType;
 
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "flights")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// Borrado lógico: se actualiza el campo 'active' a false en lugar de eliminar el registro físicamente
 @SQLDelete(sql = "UPDATE flights SET active = false WHERE id = ?")
-// Definición del filtro de Hibernate para el borrado lógico, usando la clase BooleanJavaType
-@FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanJavaType.class))
 @Filter(name = "activeFilter", condition = "active = :active")
-public class Flight {
+public class Flight extends BaseEntity {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Número del vuelo
-    private String number;
+    private String flightNumber;
+    private String origin;
+    private String destination;
 
-    // Aerolínea del vuelo
-    private String airline;
+    @Column(name = "seat_type")
+    private String seatType;
 
-    // Campo para el borrado lógico
-    @Column(name = "active")
-    private Boolean active = true;
+    @Column(name = "rate_per_person")
+    private Double ratePerPerson;
+
+    // Fecha y hora de inicio
+    @Column(name = "departure_date")
+    private LocalDateTime departureDate;
+
+    // Fecha y hora de fin
+    @Column(name = "return_date")
+    private LocalDateTime returnDate;
+
+    @OneToMany(mappedBy = "flight")
+    private List<FlightBooking> listFlightBookings = new ArrayList<>();
+
 }
