@@ -31,7 +31,8 @@ public class Hotel extends BaseEntity {
     private String name;
     private String city;
 
-    @Column(name = "room_type")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_type", nullable = false)
     private RoomType roomType;
 
     @Column(name = "rate_per_night")
