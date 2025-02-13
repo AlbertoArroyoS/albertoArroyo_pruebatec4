@@ -4,6 +4,7 @@ import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
 import com.hackaboss.travelagency.service.HotelService;
 import com.hackaboss.travelagency.service.IHotelService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class HotelController {
 
     // POST /agency/hotels - Crea un nuevo hotel
     @PostMapping
-    public ResponseEntity<String> createHotel(@RequestBody HotelDTORequest hotelDTORequest) {
+    public ResponseEntity<String> createHotel(@Valid @RequestBody HotelDTORequest hotelDTORequest) {
         String createdHotel = hotelService.createHotel(hotelDTORequest);
         return ResponseEntity
                 .status(HttpStatus.CREATED)

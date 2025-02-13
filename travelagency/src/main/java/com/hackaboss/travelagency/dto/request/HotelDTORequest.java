@@ -38,11 +38,9 @@ public class HotelDTORequest {
     private Double ratePerNight;
 
     @NotNull(message = "La fecha de inicio no puede ser nula")
-    @NotBlank(message = "La fecha de inicio no puede estar vacía")
     private LocalDate dateFrom;
 
     @NotNull(message = "La fecha de fin no puede ser nula")
-    @NotBlank(message = "La fecha de fin no puede estar vacía")
     private LocalDate dateTo;
 
 }
