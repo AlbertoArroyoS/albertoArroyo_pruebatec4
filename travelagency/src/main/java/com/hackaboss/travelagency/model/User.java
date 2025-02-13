@@ -1,15 +1,16 @@
 package com.hackaboss.travelagency.model;
 
-import com.sun.jdi.BooleanType;
+import com.hackaboss.travelagency.util.Role;
 import jakarta.persistence.*;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.descriptor.java.BooleanJavaType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//Borrado lógico, se define la consulta para el borrado lógico
+// Borrado lógico: se actualiza el campo 'active' a false en lugar de eliminar el registro físicamente
 @SQLDelete(sql = "UPDATE users SET active = false WHERE id = ?")
-// Definición del filtro de Hibernate para el borrado lógico, se define el nombre del filtro y el parámetro que se va a utilizar
-@FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanType.class))
+// Definición del filtro de Hibernate para el borrado lógico, usando BooleanJavaType para el parámetro
+@FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanJavaType.class))
 @Filter(name = "activeFilter", condition = "active = :active")
 public class User {
 
@@ -31,9 +32,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+
     private String email;
+
     private String password;
+
     private String name;
     private String surname;
     private String phone;
@@ -47,9 +52,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlightBooking> listFlightBookings = new ArrayList<>();
 
+    @Column(name = "role")
+    private Role role;
 
     // Campo para el borrado lógico
     @Column(name = "active")
     private Boolean active = true;
-
 }

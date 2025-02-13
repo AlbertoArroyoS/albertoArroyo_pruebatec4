@@ -1,6 +1,5 @@
 package com.hackaboss.travelagency.model;
 
-import com.sun.jdi.BooleanType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +9,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.type.descriptor.java.BooleanJavaType;
 
 @Entity
 @Table(name = "flight_bookings")
@@ -17,8 +17,10 @@ import org.hibernate.annotations.SQLDelete;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// Borrado lógico: se actualiza el campo 'active' a false en lugar de eliminar el registro físicamente
 @SQLDelete(sql = "UPDATE flight_bookings SET active = false WHERE id = ?")
-@FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanType.class))
+// Definición del filtro de Hibernate para el borrado lógico, usando la clase BooleanJavaType
+@FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanJavaType.class))
 @Filter(name = "activeFilter", condition = "active = :active")
 public class FlightBooking {
 
@@ -36,5 +38,4 @@ public class FlightBooking {
 
     @Column(name = "active")
     private Boolean active = true;
-
 }
