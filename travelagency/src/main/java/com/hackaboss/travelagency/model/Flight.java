@@ -47,7 +47,7 @@ public class Flight {
     private LocalDateTime returnDate;
 
 
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<FlightBooking> listFlightBookings = new ArrayList<>();
 
     @Column(name = "active")
