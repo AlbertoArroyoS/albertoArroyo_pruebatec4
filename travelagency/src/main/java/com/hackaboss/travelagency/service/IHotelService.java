@@ -1,7 +1,6 @@
 package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
-import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
 
 import java.util.List;

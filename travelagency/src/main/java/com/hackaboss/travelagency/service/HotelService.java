@@ -2,7 +2,6 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
-import com.hackaboss.travelagency.mapper.HotelBookingMapper;
 import com.hackaboss.travelagency.mapper.HotelMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.repository.HotelRepository;
