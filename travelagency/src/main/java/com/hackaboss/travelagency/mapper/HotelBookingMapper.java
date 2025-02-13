@@ -9,8 +9,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface HotelBookingMapper {
@@ -18,7 +18,7 @@ public interface HotelBookingMapper {
     @Mapping(target = "dateFrom", source = "dateFrom")
     @Mapping(target = "dateTo", source = "dateTo")
     // Calcula el número de noches entre dateFrom y dateTo utilizando el nombre completamente calificado
-    @Mapping(target = "nights", expression = "java( hotel.getDateFrom() != null && hotel.getDateTo() != null ? (int) java.time.temporal.ChronoUnit.DAYS.between(hotel.getDateFrom().toLocalDate(), hotel.getDateTo().toLocalDate()) : 0 )")
+    @Mapping(target = "nights", expression = "java( hotel.getDateFrom() != null && hotel.getDateTo() != null ? (int) java.time.temporal.ChronoUnit.DAYS.between(hotel.getDateFrom(), hotel.getDateTo()) : 0 )")
     @Mapping(target = "city", source = "city")
     @Mapping(target = "hotelCode", source = "hotelCode")
     // Define peopleQuantity como el número de reservas asociadas al hotel
@@ -34,14 +34,14 @@ public interface HotelBookingMapper {
     @Named("mapBookingsToHosts")
     default List<UserDTOResponse> mapBookingsToHosts(List<HotelBooking> bookings) {
         if (bookings == null) {
-            return null;
+            return new ArrayList<>();
         }
         // Obtiene la instancia del UserMapper de forma estática
         UserMapper userMapper = Mappers.getMapper(UserMapper.class);
         return bookings.stream()
                 .map(booking -> userMapper.toDTO(booking.getUser()))
                 .distinct()  // Elimina duplicados en caso de que un mismo usuario aparezca en varias reservas
-                .collect(Collectors.toList());
+                .toList();
     }
 }
 

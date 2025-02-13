@@ -5,6 +5,7 @@ package com.hackaboss.travelagency.dto.response;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,7 +17,7 @@ public class HotelDTOResponse {
     private String city;
     private String roomType;
     private Double ratePerNight;
-    private LocalDateTime dateFrom;
-    private LocalDateTime dateTo;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private String booked;
 }

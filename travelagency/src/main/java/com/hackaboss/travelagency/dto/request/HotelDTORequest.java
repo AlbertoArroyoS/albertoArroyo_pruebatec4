@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -38,10 +39,10 @@ public class HotelDTORequest {
 
     @NotNull(message = "La fecha de inicio no puede ser nula")
     @NotBlank(message = "La fecha de inicio no puede estar vacía")
-    private LocalDateTime dateFrom;
+    private LocalDate dateFrom;
 
     @NotNull(message = "La fecha de fin no puede ser nula")
     @NotBlank(message = "La fecha de fin no puede estar vacía")
-    private LocalDateTime dateTo;
+    private LocalDate dateTo;
 
 }

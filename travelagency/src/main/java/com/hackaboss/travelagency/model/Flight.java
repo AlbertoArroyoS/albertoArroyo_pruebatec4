@@ -7,7 +7,7 @@ import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,14 +37,13 @@ public class Flight extends BaseEntity {
     @Column(name = "rate_per_person")
     private Double ratePerPerson;
 
-    // Fecha y hora de inicio
     @Column(name = "departure_date")
-    private LocalDateTime departureDate;
+    private LocalDate departureDate;
 
-    // Fecha y hora de fin
     @Column(name = "return_date")
-    private LocalDateTime returnDate;
+    private LocalDate returnDate;
 
+    // Relación con reservas de vuelo
     @OneToMany(mappedBy = "flight")
     private List<FlightBooking> listFlightBookings = new ArrayList<>();
 

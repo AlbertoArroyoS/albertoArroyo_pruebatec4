@@ -8,7 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,15 +37,18 @@ public class Hotel extends BaseEntity {
     @Column(name = "rate_per_night")
     private Double ratePerNight;
 
-    // Fecha y hora de inicio
-    @Column(name = "date_from")
-    private LocalDateTime dateFrom;
+    @Column(name = "date_from", columnDefinition = "date")
+    private LocalDate dateFrom;
 
     // Fecha y hora de fin
     @Column(name = "date_to")
-    private LocalDateTime dateTo;
+    private LocalDate dateTo;
 
-    private Booked booked;
+    //Por defecto que el hotel no esté reservado
+    @Enumerated(EnumType.STRING)
+    @Column(name = "booked", nullable = false)
+    @Builder.Default
+    private Booked booked = Booked.NO;
 
     @OneToMany(mappedBy = "hotel", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<HotelBooking> listHotelBookings = new ArrayList<>();
