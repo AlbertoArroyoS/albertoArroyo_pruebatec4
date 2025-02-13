@@ -27,7 +27,13 @@ public class FlightDTORequest {
     @NotBlank(message = "El tipo de asiento no puede estar vacío")
     @Size(min = 2, max = 250, message = "El tipo de asiento debe tener entre 2 y 250 caracteres")
     private String seatType;
+
+    @NotNull(message = "La tarifa por persona no puede ser nula")
     private Double ratePerPerson;
+
+    @NotNull(message = "La fecha de salida no puede ser nula")
     private LocalDate departureDate;
+
+    @NotNull(message = "La fecha de regreso no puede ser nula")
     private LocalDate returnDate;
 }
