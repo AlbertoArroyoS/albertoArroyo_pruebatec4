@@ -26,7 +26,7 @@ public class HotelService implements IHotelService {
 
     @Override
     public List<HotelDTOResponse> findAll() {
-        return hotelRepository.findAll().stream()
+        return hotelRepository.findByActiveTrue().stream()
                 .map(hotelMapper::entityToDTO)
                 .toList();
     }
@@ -42,7 +42,7 @@ public class HotelService implements IHotelService {
 
     @Override
     public Optional<HotelDTOResponse> findById(Long id) {
-        return hotelRepository.findById(id)
+        return hotelRepository.findByIdAndActiveTrue(id)
                 .map(hotelMapper::entityToDTO);
     }
 }

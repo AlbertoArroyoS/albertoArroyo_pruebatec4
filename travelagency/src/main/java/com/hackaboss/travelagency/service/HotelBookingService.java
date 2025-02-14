@@ -10,14 +10,13 @@ import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.repository.UserRepository;
-import com.hackaboss.travelagency.util.RoomType;
 import jakarta.transaction.Transactional;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class HotelBookingService implements IHotelBookingService {
@@ -35,17 +34,12 @@ public class HotelBookingService implements IHotelBookingService {
         this.userRepository = userRepository;
     }
 
-
-
-
-
-
-
     @Override
+    @Transactional
     public List<HotelBookingDTOResponse> findAll() {
-        return hotelBookingRepository.findAll().stream()
+        return hotelBookingRepository.findByActiveTrue().stream()
                 .map(hotelBookingMapper::entityToDTO)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -54,13 +48,13 @@ public class HotelBookingService implements IHotelBookingService {
         // Buscar el hotel: se busca por id (si se envía) o por hotelCode
         Hotel hotelEntity;
         if (dto.getHotel().getId() != null) {
-            Optional<Hotel> hotelOpt = hotelRepository.findById(dto.getHotel().getId());
+            Optional<Hotel> hotelOpt = hotelRepository.findByIdAndActiveTrue(dto.getHotel().getId());
             if (hotelOpt.isEmpty()) {
                 return "Hotel no encontrado";
             }
             hotelEntity = hotelOpt.get();
         } else {
-            Optional<Hotel> hotelOpt = hotelRepository.findByHotelCode(dto.getHotel().getHotelCode());
+            Optional<Hotel> hotelOpt = hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode());
             if (hotelOpt.isEmpty()) {
                 return "Hotel no encontrado";
             }
