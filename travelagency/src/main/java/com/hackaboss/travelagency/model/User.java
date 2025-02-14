@@ -1,6 +1,7 @@
 package com.hackaboss.travelagency.model;
 
 import com.hackaboss.travelagency.model.base.BaseEntity;
+import com.hackaboss.travelagency.util.Booked;
 import com.hackaboss.travelagency.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,7 +46,10 @@ public class User extends BaseEntity {
     @ManyToMany(mappedBy = "passengers")
     private List<FlightBooking> flightBooking = new ArrayList<>();
 
-    @Column(name = "role")
-    private Role role;
-    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    @Builder.Default
+    private Role role = Role.USER;
+
+
 }

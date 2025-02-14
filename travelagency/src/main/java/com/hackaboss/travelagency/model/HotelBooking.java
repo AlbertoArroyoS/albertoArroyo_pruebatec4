@@ -26,12 +26,12 @@ public class HotelBooking extends BaseEntity {
     private Long id;
 
     // Relación con hoteles
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
     // Relación con usuarios
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 

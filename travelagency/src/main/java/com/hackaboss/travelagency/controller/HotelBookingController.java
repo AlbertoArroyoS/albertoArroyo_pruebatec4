@@ -1,11 +1,12 @@
 package com.hackaboss.travelagency.controller;
 
+import com.hackaboss.travelagency.dto.request.HotelBookingDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.service.IHotelBookingService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,4 +27,15 @@ public class HotelBookingController {
         List<HotelBookingDTOResponse> flights = hotelBookingService.findAll();
         return ResponseEntity.ok(flights);
     }
+
+    //Post
+    @PostMapping
+    public ResponseEntity<String> createHotelBooking(@Valid @RequestBody HotelBookingDTORequest hotelBookingDTORequest) {
+        String createdBooking = hotelBookingService.createHotelBooking(hotelBookingDTORequest);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdBooking);
+    }
 }
+
+

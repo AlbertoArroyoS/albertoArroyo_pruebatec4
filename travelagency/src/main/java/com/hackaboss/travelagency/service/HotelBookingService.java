@@ -35,6 +35,35 @@ public class HotelBookingService implements IHotelBookingService {
                 .map(hotelBookingMapper::entityToDTO)
                 .toList();
     }
+    /*
+    ublic HotelBooking createHotelBooking(HotelBookingDTORequest dto) {
+        // Mapea el DTO a la entidad
+        HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
+
+        // Si en el DTO viene el hotel con id, lo buscamos
+        if (dto.getHotel() != null && dto.getHotel().getId() != null) {
+            Hotel hotel = hotelRepository.findById(dto.getHotel().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Hotel not found"));
+            booking.setHotel(hotel);
+        }
+
+        // Hacemos lo mismo para el usuario principal
+        if (dto.getUser() != null && dto.getUser().getId() != null) {
+            User user = userRepository.findById(dto.getUser().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            booking.setUser(user);
+        }
+
+        // Para la lista de pasajeros (hosts), hacemos lo mismo que antes
+        List<Long> passengerIds = dto.getListPassengers().stream()
+                .map(UserDTORequest::getId)
+                .collect(Collectors.toList());
+        List<User> existingUsers = userRepository.findAllById(passengerIds);
+        booking.setHosts(existingUsers);
+
+        return hotelBookingRepository.save(booking);
+    }
+     */
 
     @Override
     public String createHotelBooking(HotelBookingDTORequest dto) {
