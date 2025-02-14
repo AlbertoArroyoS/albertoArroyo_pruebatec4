@@ -2,7 +2,6 @@ package com.hackaboss.travelagency.mapper;
 
 import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.dto.response.UserDTOResponse;
-import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.model.HotelBooking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,38 +11,46 @@ import org.mapstruct.factory.Mappers;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.hackaboss.travelagency.model.User;
+
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface HotelBookingMapper {
 
-    @Mapping(target = "dateFrom", source = "dateFrom")
-    @Mapping(target = "dateTo", source = "dateTo")
-    // Calcula el número de noches entre dateFrom y dateTo utilizando el nombre completamente calificado
-    @Mapping(target = "nights", expression = "java( hotel.getDateFrom() != null && hotel.getDateTo() != null ? (int) java.time.temporal.ChronoUnit.DAYS.between(hotel.getDateFrom(), hotel.getDateTo()) : 0 )")
-    @Mapping(target = "city", source = "city")
-    @Mapping(target = "hotelCode", source = "hotelCode")
-    // Define peopleQuantity como el número de reservas asociadas al hotel
-    @Mapping(target = "peopleQuantity", expression = "java( hotel.getListHotelBookings() != null ? hotel.getListHotelBookings().size() : 0 )")
-    // Convierte roomType a String
-    @Mapping(target = "roomType", expression = "java( hotel.getRoomType() != null ? hotel.getRoomType().toString() : null )")
-    // Mapea la lista de reservas a listHosts usando el método auxiliar mapBookingsToHosts
-    @Mapping(target = "listHosts", source = "listHotelBookings", qualifiedByName = "mapBookingsToHosts")
-    HotelBookingDTOResponse toDTO(Hotel hotel);
+    @Mapping(target = "dateFrom",
+            expression = "java( booking.getHotel() != null ? booking.getHotel().getDateFrom() : null )")
+    @Mapping(target = "dateTo",
+            expression = "java( booking.getHotel() != null ? booking.getHotel().getDateTo() : null )")
+    @Mapping(target = "nights",
+            expression = "java( (booking.getHotel() != null && booking.getHotel().getDateFrom() != null && booking.getHotel().getDateTo() != null) "
+                    + "? (int) java.time.temporal.ChronoUnit.DAYS.between(booking.getHotel().getDateFrom(), booking.getHotel().getDateTo()) "
+                    + ": 0 )")
+    // Mapeas city, hotelCode, etc. también desde booking.getHotel() si allí está la información
+    @Mapping(target = "city",
+            expression = "java( booking.getHotel() != null ? booking.getHotel().getCity() : null )")
+    @Mapping(target = "hotelCode",
+            expression = "java( booking.getHotel() != null ? booking.getHotel().getHotelCode() : null )")
+    @Mapping(target = "peopleQuantity",
+            expression = "java( booking.getHosts() != null ? booking.getHosts().size() : 0 )")
+    // Ejemplo para mapear la lista de hosts a un DTO de usuarios
+    @Mapping(target = "listHosts", source = "hosts", qualifiedByName = "mapHostsToUserDTOResponse")
+    HotelBookingDTOResponse toDTO(HotelBooking booking);
 
-    // Método auxiliar que convierte la lista de HotelBooking en una lista de UserDTOResponse
-    // utilizando el UserMapper para cada reserva
-    @Named("mapBookingsToHosts")
-    default List<UserDTOResponse> mapBookingsToHosts(List<HotelBooking> bookings) {
-        if (bookings == null) {
+    // Método auxiliar para convertir List<User> en List<UserDTOResponse>
+    @Named("mapHostsToUserDTOResponse")
+    default List<UserDTOResponse> mapHostsToUserDTOResponse(List<User> hosts) {
+        if (hosts == null) {
             return new ArrayList<>();
         }
-        // Obtiene la instancia del UserMapper de forma estática
         UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-        return bookings.stream()
-                .map(booking -> userMapper.toDTO(booking.getUser()))
-                .distinct()  // Elimina duplicados en caso de que un mismo usuario aparezca en varias reservas
+        return hosts.stream()
+                .map(userMapper::toDTO)
+                .distinct()
                 .toList();
     }
 }
+
+
+
 
 
 //-------------------
