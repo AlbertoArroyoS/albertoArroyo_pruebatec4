@@ -37,13 +37,13 @@ public class User extends BaseEntity {
     private String phone;
     private String dni;
 
-    // Relación con reservas de hotel
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<HotelBooking> listHotelBookings = new ArrayList<>();
+    // Si quieres que el user sepa sus reservas de hotel
+    @ManyToMany(mappedBy = "hosts")
+    private List<HotelBooking> hotelBookings = new ArrayList<>();
 
-    // Relación con reservas de vuelo
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FlightBooking> listFlightBookings = new ArrayList<>();
+    // Si quieres que el user sepa sus reservas de vuelo
+    @ManyToMany(mappedBy = "passengers")
+    private List<FlightBooking> flightBooking = new ArrayList<>();
 
     @Column(name = "role")
     private Role role;

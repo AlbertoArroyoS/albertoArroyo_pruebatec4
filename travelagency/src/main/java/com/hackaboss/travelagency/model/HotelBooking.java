@@ -6,6 +6,9 @@ import lombok.*;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -31,5 +34,12 @@ public class HotelBooking extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany
+    @JoinTable(name = "hotel_booking_users",
+            joinColumns = @JoinColumn(name = "hotel_booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> hosts = new ArrayList<>();
+
 
 }
