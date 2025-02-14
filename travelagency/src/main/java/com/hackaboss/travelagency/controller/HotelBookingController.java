@@ -29,7 +29,7 @@ public class HotelBookingController {
     }
 
     //Post
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<String> createHotelBooking(@Valid @RequestBody HotelBookingDTORequest hotelBookingDTORequest) {
         String createdBooking = hotelBookingService.createHotelBooking(hotelBookingDTORequest);
         return ResponseEntity
