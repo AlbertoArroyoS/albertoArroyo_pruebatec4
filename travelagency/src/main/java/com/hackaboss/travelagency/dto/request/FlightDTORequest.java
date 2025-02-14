@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 public class FlightDTORequest {
 
+    private Long id;
+
     @NotNull(message = "El número de vuejo no puede ser nulo")
     @NotBlank(message = "El número de vuelo no puede estar vacío")
     @Size(min = 2, max = 250, message = "El número del vuelo debe tener entre 2 y 250 caracteres")

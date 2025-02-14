@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Builder
 public class HotelDTORequest {
 
+    private Long id;
+
     @NotNull(message = "El codigo del hotel no puede ser nulo")
     @NotBlank(message = "El codigo del hotel no puede estar vacío")
     @Size(min = 2, max = 250, message = "El codigo del hotel debe tener entre 2 y 250 caracteres")

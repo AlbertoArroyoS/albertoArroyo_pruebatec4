@@ -5,48 +5,60 @@ import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.mapper.HotelBookingMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.model.HotelBooking;
+import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
 public class HotelBookingService implements IHotelBookingService {
 
-    private final HotelBookingMapper bookingMapper;
-    private final HotelRepository hotelRepository;
-    private final HotelBookingRepository bookingRepository;
+    private final HotelBookingMapper hotelBookingMapper;
+    private final HotelBookingRepository hotelBookingRepository;
+    private final IHotelService hotelService;
+    //private final IUserService userService;
 
-    public HotelBookingService(HotelBookingMapper bookingMapper,
-                               HotelRepository hotelRepository,
-                               HotelBookingRepository bookingRepository) {
-        this.bookingMapper = bookingMapper;
-        this.hotelRepository = hotelRepository;
-        this.bookingRepository = bookingRepository;
+    public HotelBookingService(HotelBookingMapper hotelBookingMapper, HotelBookingRepository hotelBookingRepository, IHotelService hotelService) {
+        this.hotelBookingMapper = hotelBookingMapper;
+        this.hotelBookingRepository = hotelBookingRepository;
+        this.hotelService = hotelService;
     }
+
+
+
 
     @Override
     public List<HotelBookingDTOResponse> findAll() {
-        return bookingRepository.findAll().stream()
-                .map(bookingMapper::entityToDTO)
+        return hotelBookingRepository.findAll().stream()
+                .map(hotelBookingMapper::entityToDTO)
                 .toList();
     }
 
     @Override
     public String createHotelBooking(HotelBookingDTORequest dto) {
-        // 1. Convertir DTO a entidad
-        HotelBooking booking = bookingMapper.requestToEntity(dto);
+        HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
 
-        // 2. Buscar el hotel
-        Hotel hotel = hotelRepository.findByHotelCode(dto.getHotelCode())
+        // Buscar hotel por hotelCode (igual que antes)
+        /*
+        Hotel hotel = hotelService.findByHotelCode(dto.getHotel().getHotelCode())
                 .orElseThrow(() -> new RuntimeException("Hotel no encontrado"));
-        booking.setHotel(hotel);
+        booking.setHotel(hotel);*/
 
-        // 3. Guardar la reserva
-        HotelBooking saved = bookingRepository.save(booking);
+        // Buscar el user principal
+        /*
+        if (dto.getUser() != null && dto.getUser().getId() != null) {
+            User userPrincipal = userService.findById(dto.getUser().getId())
+                    .orElseThrow(() -> new RuntimeException("Usuario principal no encontrado"));
+            booking.setUser(userPrincipal);
+        }*/
 
-        // 4. Devolver un mensaje con el ID, por ejemplo
-        return "Reserva creada con éxito. ID: " + saved.getId();
+        // Guardar
+        hotelBookingRepository.save(booking);
+        return "Reserva creada con éxito. ID: " + booking.getId();
     }
+
+
 
 }

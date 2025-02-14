@@ -23,7 +23,7 @@ public class HotelBooking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     // Relación con hoteles
     @ManyToOne(fetch = FetchType.LAZY)

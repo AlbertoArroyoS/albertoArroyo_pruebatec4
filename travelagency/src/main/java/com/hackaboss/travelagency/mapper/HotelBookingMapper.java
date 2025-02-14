@@ -1,5 +1,7 @@
 package com.hackaboss.travelagency.mapper;
 
+import com.hackaboss.travelagency.dto.request.HotelBookingDTORequest;
+import com.hackaboss.travelagency.dto.request.UserDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.dto.response.UserDTOResponse;
 import com.hackaboss.travelagency.model.HotelBooking;
@@ -10,12 +12,16 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.hackaboss.travelagency.model.User;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface HotelBookingMapper {
 
+    // ----------------------------------------------------
+    // 1) ENTIDAD → DTO (HotelBooking -> HotelBookingDTOResponse)
+    // ----------------------------------------------------
     @Mapping(target = "dateFrom",
             expression = "java( booking.getHotel() != null ? booking.getHotel().getDateFrom() : null )")
     @Mapping(target = "dateTo",
@@ -24,18 +30,37 @@ public interface HotelBookingMapper {
             expression = "java( (booking.getHotel() != null && booking.getHotel().getDateFrom() != null && booking.getHotel().getDateTo() != null) "
                     + "? (int) java.time.temporal.ChronoUnit.DAYS.between(booking.getHotel().getDateFrom(), booking.getHotel().getDateTo()) "
                     + ": 0 )")
-    // Mapeas city, hotelCode, etc. también desde booking.getHotel() si allí está la información
     @Mapping(target = "city",
             expression = "java( booking.getHotel() != null ? booking.getHotel().getCity() : null )")
     @Mapping(target = "hotelCode",
             expression = "java( booking.getHotel() != null ? booking.getHotel().getHotelCode() : null )")
     @Mapping(target = "peopleQuantity",
             expression = "java( booking.getHosts() != null ? booking.getHosts().size() : 0 )")
-    // Ejemplo para mapear la lista de hosts a un DTO de usuarios
-    @Mapping(target = "listHosts", source = "hosts", qualifiedByName = "mapHostsToUserDTOResponse")
+    @Mapping(target = "roomType",
+            expression = "java( (booking.getHotel() != null && booking.getHotel().getRoomType() != null) "
+                    + "? booking.getHotel().getRoomType().toString() : null )")
+    // Mapea la lista de hosts (User) a listHosts en el DTO (UserDTOResponse)
+    @Mapping(target = "hosts", source = "hosts", qualifiedByName = "mapHostsToUserDTOResponse")
     HotelBookingDTOResponse entityToDTO(HotelBooking booking);
 
-    // Método auxiliar para convertir List<User> en List<UserDTOResponse>
+    // ----------------------------------------------------
+    // 2) DTO (Request) → ENTIDAD (HotelBooking)
+    // ----------------------------------------------------
+    @Mapping(target = "hotel", ignore = true)
+    // Se ignora porque normalmente buscarás el hotel por hotelCode en el Service
+
+    @Mapping(target = "user", ignore = true)
+    // Si necesitas un usuario principal, podrías mapearlo con un método auxiliar
+    // o buscarlo en el Service. Por ahora, lo ignoramos.
+
+    @Mapping(target = "hosts", source = "listPassengers", qualifiedByName = "mapPassengersDTOToUsers")
+    HotelBooking requestToEntity(HotelBookingDTORequest dto);
+
+    // ----------------------------------------------------
+    // MÉTODOS AUXILIARES
+    // ----------------------------------------------------
+
+    // (A) ENTIDAD → DTO (Users)
     @Named("mapHostsToUserDTOResponse")
     default List<UserDTOResponse> mapHostsToUserDTOResponse(List<User> hosts) {
         if (hosts == null) {
@@ -45,13 +70,21 @@ public interface HotelBookingMapper {
         return hosts.stream()
                 .map(userMapper::toDTO)
                 .distinct()
-                .toList();
+                .collect(Collectors.toList());
+    }
+
+    // (B) DTO (Request) → ENTIDAD (Users)
+    @Named("mapPassengersDTOToUsers")
+    default List<User> mapPassengersDTOToUsers(List<UserDTORequest> passengerDTOs) {
+        if (passengerDTOs == null) {
+            return new ArrayList<>();
+        }
+        UserMapper userMapper = Mappers.getMapper(UserMapper.class);
+        return passengerDTOs.stream()
+                .map(userMapper::requestToEntity)  // Crea o asocia el User
+                .collect(Collectors.toList());
     }
 }
-
-
-
-
 
 //-------------------
 /*
