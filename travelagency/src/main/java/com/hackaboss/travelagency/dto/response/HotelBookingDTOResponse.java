@@ -16,6 +16,7 @@ public class HotelBookingDTOResponse {
     private String hotelCode;
     private Integer peopleQuantity;
     private String roomType;
+    private Double price;
     private List<UserDTOResponse> hosts;
 
 }

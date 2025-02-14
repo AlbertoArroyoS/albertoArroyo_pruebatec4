@@ -31,10 +31,6 @@ public class HotelBooking extends BaseEntity {
     private Hotel hotel;
 
     // Relación con usuarios
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @ManyToMany
     @JoinTable(name = "hotel_booking_users",
             joinColumns = @JoinColumn(name = "hotel_booking_id"),

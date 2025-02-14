@@ -1,5 +1,6 @@
 package com.hackaboss.travelagency.dto.request;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,6 +36,7 @@ public class HotelDTORequest {
     private String roomType;
 
     @NotNull(message = "La tarifa por noche no puede ser nula")
+    @DecimalMin(value = "0.01", message = "El precio debe ser al menos 0.01")
     private Double ratePerNight;
 
     @NotNull(message = "La fecha de inicio no puede ser nula")

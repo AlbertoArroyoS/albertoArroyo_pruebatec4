@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HotelService implements IHotelService {
@@ -37,6 +38,12 @@ public class HotelService implements IHotelService {
         hotelRepository.save(hotel);
         return "Hotel creado con éxito";
 
+    }
+
+    @Override
+    public Optional<HotelDTOResponse> findById(Long id) {
+        return hotelRepository.findById(id)
+                .map(hotelMapper::entityToDTO);
     }
 }
 

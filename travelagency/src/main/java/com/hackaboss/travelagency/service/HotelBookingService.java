@@ -1,6 +1,7 @@
 package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.HotelBookingDTORequest;
+import com.hackaboss.travelagency.dto.request.UserDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.mapper.HotelBookingMapper;
 import com.hackaboss.travelagency.model.Hotel;
@@ -8,23 +9,34 @@ import com.hackaboss.travelagency.model.HotelBooking;
 import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
+import com.hackaboss.travelagency.repository.UserRepository;
+import com.hackaboss.travelagency.util.RoomType;
+import jakarta.transaction.Transactional;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class HotelBookingService implements IHotelBookingService {
 
     private final HotelBookingMapper hotelBookingMapper;
     private final HotelBookingRepository hotelBookingRepository;
-    private final IHotelService hotelService;
-    //private final IUserService userService;
+    private final HotelRepository hotelRepository;
+    private final UserRepository userRepository;
 
-    public HotelBookingService(HotelBookingMapper hotelBookingMapper, HotelBookingRepository hotelBookingRepository, IHotelService hotelService) {
+
+    public HotelBookingService(HotelBookingMapper hotelBookingMapper, HotelBookingRepository hotelBookingRepository, HotelRepository hotelRepository, UserRepository userRepository) {
         this.hotelBookingMapper = hotelBookingMapper;
         this.hotelBookingRepository = hotelBookingRepository;
-        this.hotelService = hotelService;
+        this.hotelRepository = hotelRepository;
+        this.userRepository = userRepository;
     }
+
+
+
 
 
 
@@ -35,58 +47,57 @@ public class HotelBookingService implements IHotelBookingService {
                 .map(hotelBookingMapper::entityToDTO)
                 .toList();
     }
-    /*
-    ublic HotelBooking createHotelBooking(HotelBookingDTORequest dto) {
-        // Mapea el DTO a la entidad
-        HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
-
-        // Si en el DTO viene el hotel con id, lo buscamos
-        if (dto.getHotel() != null && dto.getHotel().getId() != null) {
-            Hotel hotel = hotelRepository.findById(dto.getHotel().getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Hotel not found"));
-            booking.setHotel(hotel);
-        }
-
-        // Hacemos lo mismo para el usuario principal
-        if (dto.getUser() != null && dto.getUser().getId() != null) {
-            User user = userRepository.findById(dto.getUser().getId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
-            booking.setUser(user);
-        }
-
-        // Para la lista de pasajeros (hosts), hacemos lo mismo que antes
-        List<Long> passengerIds = dto.getListPassengers().stream()
-                .map(UserDTORequest::getId)
-                .collect(Collectors.toList());
-        List<User> existingUsers = userRepository.findAllById(passengerIds);
-        booking.setHosts(existingUsers);
-
-        return hotelBookingRepository.save(booking);
-    }
-     */
 
     @Override
+    @Transactional
     public String createHotelBooking(HotelBookingDTORequest dto) {
+        // Buscar el hotel: se busca por id (si se envía) o por hotelCode
+        Hotel hotelEntity;
+        if (dto.getHotel().getId() != null) {
+            Optional<Hotel> hotelOpt = hotelRepository.findById(dto.getHotel().getId());
+            if (hotelOpt.isEmpty()) {
+                return "Hotel no encontrado";
+            }
+            hotelEntity = hotelOpt.get();
+        } else {
+            Optional<Hotel> hotelOpt = hotelRepository.findByHotelCode(dto.getHotel().getHotelCode());
+            if (hotelOpt.isEmpty()) {
+                return "Hotel no encontrado";
+            }
+            hotelEntity = hotelOpt.get();
+        }
+
+        // Procesar los hosts: buscar por DNI y crear si no existen
+        List<User> hostEntities = new ArrayList<>();
+        for (UserDTORequest hostDTO : dto.getHosts()) {
+            Optional<User> userOpt = userRepository.findByDni(hostDTO.getDni());
+            if (userOpt.isPresent()) {
+                hostEntities.add(userOpt.get());
+            } else {
+                User newUser = User.builder()
+                        .name(hostDTO.getName())
+                        .surname(hostDTO.getSurname())
+                        .phone(hostDTO.getPhone())
+                        .dni(hostDTO.getDni())
+                        // Asegúrate de asignar el username si es obligatorio
+                        .username(hostDTO.getDni()) // o la lógica que corresponda
+                        .build();
+                newUser = userRepository.save(newUser);
+                hostEntities.add(newUser);
+            }
+        }
+
+        // Mapear el resto de la reserva y asignar el hotel y la lista completa de hosts
         HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
+        booking.setHotel(hotelEntity);
+        booking.setHosts(hostEntities);  // Se asigna la lista completa de hosts
 
-        // Buscar hotel por hotelCode (igual que antes)
-        /*
-        Hotel hotel = hotelService.findByHotelCode(dto.getHotel().getHotelCode())
-                .orElseThrow(() -> new RuntimeException("Hotel no encontrado"));
-        booking.setHotel(hotel);*/
-
-        // Buscar el user principal
-        /*
-        if (dto.getUser() != null && dto.getUser().getId() != null) {
-            User userPrincipal = userService.findById(dto.getUser().getId())
-                    .orElseThrow(() -> new RuntimeException("Usuario principal no encontrado"));
-            booking.setUser(userPrincipal);
-        }*/
-
-        // Guardar
-        hotelBookingRepository.save(booking);
-        return "Reserva creada con éxito. ID: " + booking.getId();
+        // Guardar la reserva y retornar mensaje
+        booking = hotelBookingRepository.save(booking);
+        return "Reserva creada correctamente con ID: " + booking.getId();
     }
+
+
 
 
 
