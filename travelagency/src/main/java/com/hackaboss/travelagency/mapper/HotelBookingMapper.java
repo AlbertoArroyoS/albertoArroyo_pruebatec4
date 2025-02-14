@@ -33,7 +33,7 @@ public interface HotelBookingMapper {
             expression = "java( booking.getHosts() != null ? booking.getHosts().size() : 0 )")
     // Ejemplo para mapear la lista de hosts a un DTO de usuarios
     @Mapping(target = "listHosts", source = "hosts", qualifiedByName = "mapHostsToUserDTOResponse")
-    HotelBookingDTOResponse toDTO(HotelBooking booking);
+    HotelBookingDTOResponse entityToDTO(HotelBooking booking);
 
     // Método auxiliar para convertir List<User> en List<UserDTOResponse>
     @Named("mapHostsToUserDTOResponse")
