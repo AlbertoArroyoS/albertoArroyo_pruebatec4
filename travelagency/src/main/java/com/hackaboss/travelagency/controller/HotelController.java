@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/agency/hotels")
+@RequestMapping("/agency")
 public class HotelController {
 
     private final IHotelService hotelService;
@@ -24,14 +24,14 @@ public class HotelController {
     }
 
     // GET /agency/hotels - Obtiene el listado de todos los hoteles registrados
-    @GetMapping
+    @GetMapping("/hotels")
     public ResponseEntity<List<HotelDTOResponse>> getAllHotels() {
         List<HotelDTOResponse> hotels = hotelService.findAll();
         return ResponseEntity.ok(hotels);
     }
 
     // POST /agency/hotels - Crea un nuevo hotel
-    @PostMapping
+    @PostMapping("/hotels")
     public ResponseEntity<String> createHotel(@Valid @RequestBody HotelDTORequest hotelDTORequest) {
         String createdHotel = hotelService.createHotel(hotelDTORequest);
         return ResponseEntity

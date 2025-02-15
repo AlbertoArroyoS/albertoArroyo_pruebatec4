@@ -18,7 +18,9 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     Optional<Hotel> findByHotelCodeAndActiveTrue(String hotelCode);
 
-    List<Hotel> findByDestinationAndActiveTrue(String destination);List<Hotel> findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+    List<Hotel> findByCityAndBookedNot(String city, Booked booked);
+
+    List<Hotel> findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqual(
             String city,
             Booked booked,
             LocalDate requestDateFrom,
