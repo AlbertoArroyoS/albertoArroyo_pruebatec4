@@ -7,6 +7,7 @@ import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 @Service
 public class FlightService implements IFlightService {
@@ -32,4 +33,24 @@ public class FlightService implements IFlightService {
         flightRepository.save(flight);
         return "Vuelo creado con éxito";
     }
+
+
+    @Override
+    public List<FlightDTOResponse> findAvailableFlights(String origin, String destination, LocalDate departureDate, LocalDate returnDate) {
+        // Validación de parámetros
+        if (origin == null || destination == null || departureDate == null || returnDate == null || departureDate.isAfter(returnDate)) {
+            throw new IllegalArgumentException("Parámetros inválidos: verifique origen, destino y fechas.");
+        }
+
+        // Se consulta el repositorio para obtener los vuelos disponibles
+        List<Flight> availableFlights = flightRepository.findByOriginAndDestinationAndDepartureDateAndReturnDateAndActiveTrue(
+                origin, destination, departureDate, returnDate
+        );
+
+        // Se convierte cada entidad Flight a FlightDTOResponse usando el mapper configurado
+        return availableFlights.stream()
+                .map(flight -> flightMapper.entityToDTO(flight))
+                .toList();
+    }
 }
+

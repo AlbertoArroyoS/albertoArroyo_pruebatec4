@@ -20,7 +20,7 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     List<Hotel> findByCityAndBookedNot(String city, Booked booked);
 
-    List<Hotel> findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+    List<Hotel> findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqualAndActiveTrue(
             String city,
             Booked booked,
             LocalDate requestDateFrom,

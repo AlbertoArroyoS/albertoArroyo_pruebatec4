@@ -59,7 +59,7 @@ public class HotelService implements IHotelService {
         // - Coinciden con el destino (ciudad)
         // - No están reservados (Booked.NO)
         // - Tienen un rango de disponibilidad que cubre el rango solicitado
-        List<Hotel> availableHotels = hotelRepository.findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+        List<Hotel> availableHotels = hotelRepository.findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqualAndActiveTrue(
                 destination,
                 Booked.NO,
                 requestDateFrom,
