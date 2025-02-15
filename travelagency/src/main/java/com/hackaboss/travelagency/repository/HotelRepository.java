@@ -1,9 +1,11 @@
 package com.hackaboss.travelagency.repository;
 
 import com.hackaboss.travelagency.model.Hotel;
+import com.hackaboss.travelagency.util.Booked;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,11 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
 
     Optional<Hotel> findByHotelCodeAndActiveTrue(String hotelCode);
 
-
+    List<Hotel> findByDestinationAndActiveTrue(String destination);List<Hotel> findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqual(
+            String city,
+            Booked booked,
+            LocalDate requestDateFrom,
+            LocalDate requestDateTo
+    );
 
 }
