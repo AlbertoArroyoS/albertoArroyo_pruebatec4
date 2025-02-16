@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.FlightBookingRequestDTO;
 import com.hackaboss.travelagency.dto.request.UserDTORequest;
+import com.hackaboss.travelagency.dto.response.FlightBookingResponseDTO;
 import com.hackaboss.travelagency.mapper.FlightBookingMapper;
 import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.model.FlightBooking;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FlightBookingService implements IFlightBookingService {
@@ -68,5 +70,13 @@ public class FlightBookingService implements IFlightBookingService {
 
         Double totalAmount = flight.getRatePerPerson() * passengers.size();
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
+    }
+
+    @Override
+    public List<FlightBookingResponseDTO> findAll() {
+        List<FlightBooking> activeBookings = flightBookingRepository.findByActiveTrue();
+        return activeBookings.stream()
+                .map(flightBookingMapper::entityToDTO)
+                .collect(Collectors.toList());
     }
 }

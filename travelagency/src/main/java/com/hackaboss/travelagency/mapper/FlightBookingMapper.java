@@ -16,7 +16,7 @@ public interface FlightBookingMapper {
     @Mapping(source = "flight.departureDate", target = "departureDate")
     @Mapping(source = "passengers", target = "passengers")
     @Mapping(target = "numberOfPassengers", expression = "java(booking.getPassengers() != null ? booking.getPassengers().size() : 0)")
-    @Mapping(target = "totalAmount", ignore = true) // Se calculará en el servicio
+    @Mapping(target = "totalAmount", expression = "java(booking.getFlight().getRatePerPerson() * booking.getPassengers().size())") // Se calculará en el servicio
     FlightBookingResponseDTO entityToDTO(FlightBooking booking);
 
     @Mapping(source = "flight", target = "flight")
