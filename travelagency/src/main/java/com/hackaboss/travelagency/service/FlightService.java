@@ -4,6 +4,7 @@ import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
 import com.hackaboss.travelagency.mapper.FlightMapper;
 import com.hackaboss.travelagency.model.Flight;
+import com.hackaboss.travelagency.repository.FlightBookingRepository;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,14 @@ public class FlightService implements IFlightService {
 
     private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
+    private final FlightBookingRepository flightBookingRepository;
 
-    public FlightService(FlightMapper flightMapper, FlightRepository flightRepository) {
+    public FlightService(FlightMapper flightMapper, FlightRepository flightRepository, FlightBookingRepository flightBookingRepository) {
         this.flightMapper = flightMapper;
         this.flightRepository = flightRepository;
+        this.flightBookingRepository = flightBookingRepository;
     }
+
 
     @Override
     public List<FlightDTOResponse> findAll() {
@@ -79,10 +83,17 @@ public class FlightService implements IFlightService {
             throw new RuntimeException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar.");
         }
 
+        // Verificar si el vuelo tiene reservas activas
+        boolean hasBookings = flightBookingRepository.existsByFlightAndActiveTrue(flight);
+        if (hasBookings) {
+            return "No se puede eliminar el vuelo, tiene reservas activas.";
+        }
+
         flight.setActive(false);
         flightRepository.save(flight);
         return "Vuelo eliminado con éxito";
     }
+
 
     @Override
     public Optional<FlightDTOResponse> findById(Long id) {

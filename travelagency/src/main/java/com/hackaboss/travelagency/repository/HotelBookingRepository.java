@@ -14,6 +14,6 @@ public interface HotelBookingRepository extends JpaRepository<HotelBooking, Long
     List<HotelBooking> findByActiveTrue();
 
     boolean existsByHotelAndDateFromAndDateToAndActiveTrue(Hotel hotel, LocalDate dateFrom, LocalDate dateTo);
-
+    boolean existsByHotelAndActiveTrue(Hotel hotel);
 
 }

@@ -15,4 +15,6 @@ public interface FlightBookingRepository extends JpaRepository<FlightBooking, Lo
 
     boolean existsByFlightAndPassengersInAndActiveTrue(Flight flight, List<User> passengers);
 
+    boolean existsByFlightAndActiveTrue(Flight flight);
+
 }

@@ -4,6 +4,7 @@ import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
 import com.hackaboss.travelagency.mapper.HotelMapper;
 import com.hackaboss.travelagency.model.Hotel;
+import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.util.Booked;
 import com.hackaboss.travelagency.util.RoomType;
@@ -21,11 +22,12 @@ public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
+    private final HotelBookingRepository hotelBookingRepository;
 
-    @Autowired
-    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper) {
+    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper, HotelBookingRepository hotelBookingRepository) {
         this.hotelRepository = hotelRepository;
         this.hotelMapper = hotelMapper;
+        this.hotelBookingRepository = hotelBookingRepository;
     }
 
 
@@ -109,6 +111,12 @@ public class HotelService implements IHotelService {
 
         if (hotel == null) {
             throw new RuntimeException("No se encontró el hotel con ID " + id + ". No se pudo eliminar.");
+        }
+
+        // Verificar si el hotel tiene reservas activas
+        boolean hasBookings = hotelBookingRepository.existsByHotelAndActiveTrue(hotel);
+        if (hasBookings) {
+            return "No se puede eliminar el hotel, tiene reservas activas.";
         }
 
         hotel.setActive(false);
