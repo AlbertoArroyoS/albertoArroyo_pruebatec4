@@ -10,7 +10,9 @@ import java.util.Optional;
 public interface IHotelService {
 
     List<HotelDTOResponse> findAll();
-    String createHotel (HotelDTORequest hotelDTORequest);
+    String createHotel(HotelDTORequest hotelDTORequest);
     Optional<HotelDTOResponse> findById(Long id);
     List<HotelDTOResponse> findAvailableRooms(String destination, LocalDate requestDateFrom, LocalDate requestDateTo);
+    String updateHotel(Long id, HotelDTORequest hotelDTORequest);
+    String deleteHotel(Long id);
 }

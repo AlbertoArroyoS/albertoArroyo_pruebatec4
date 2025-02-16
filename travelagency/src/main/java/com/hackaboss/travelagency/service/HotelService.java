@@ -6,6 +6,9 @@ import com.hackaboss.travelagency.mapper.HotelMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.util.Booked;
+import com.hackaboss.travelagency.util.RoomType;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +73,34 @@ public class HotelService implements IHotelService {
         return availableHotels.stream()
                 .map(hotel -> hotelMapper.entityToDTO(hotel))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public String updateHotel(Long id, HotelDTORequest hotelDTORequest) {
+        Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+
+        hotel.setHotelCode(hotelDTORequest.getHotelCode());
+        hotel.setName(hotelDTORequest.getName());
+        hotel.setCity(hotelDTORequest.getCity());
+        hotel.setRoomType(RoomType.valueOf(hotelDTORequest.getRoomType()));
+        hotel.setRatePerNight(hotelDTORequest.getRatePerNight());
+        hotel.setDateFrom(hotelDTORequest.getDateFrom());
+        hotel.setDateTo(hotelDTORequest.getDateTo());
+
+        hotelRepository.save(hotel);
+        return "Hotel actualizado con éxito";
+    }
+
+    @Override
+    @Transactional
+    public String deleteHotel(Long id) {
+        Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+        hotel.setActive(false);
+        hotelRepository.save(hotel);
+        return "Hotel eliminado con éxito";
     }
 
 }
