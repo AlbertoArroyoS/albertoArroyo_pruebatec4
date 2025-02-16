@@ -38,30 +38,29 @@ public class HotelService implements IHotelService {
 
     @Override
     public String createHotel(HotelDTORequest hotelDTORequest) {
-        //Convertir el DTO a entidad y guardarla
+        if (hotelDTORequest == null) {
+            throw new RuntimeException("Datos del hotel no pueden ser nulos. No se pudo crear.");
+        }
         Hotel hotel = hotelMapper.requestToEntity(hotelDTORequest);
         hotelRepository.save(hotel);
         return "Hotel creado con éxito";
-
     }
 
     @Override
     public Optional<HotelDTOResponse> findById(Long id) {
+        if (id == null) {
+            throw new RuntimeException("El campo ID no puede ser nulo. No se pudo buscar.");
+        }
         return hotelRepository.findByIdAndActiveTrue(id)
                 .map(hotelMapper::entityToDTO);
     }
 
     @Override
     public List<HotelDTOResponse> findAvailableRooms(String destination, LocalDate requestDateFrom, LocalDate requestDateTo) {
-        // Validación de parámetros
         if (destination == null || requestDateFrom == null || requestDateTo == null || requestDateFrom.isAfter(requestDateTo)) {
-            throw new IllegalArgumentException("Parámetros inválidos: verifique destino y rango de fechas.");
+            throw new RuntimeException("Parámetros inválidos: verifique destino y rango de fechas.");
         }
 
-        // Se consulta el repositorio para obtener los hoteles que:
-        // - Coinciden con el destino (ciudad)
-        // - No están reservados (Booked.NO)
-        // - Tienen un rango de disponibilidad que cubre el rango solicitado
         List<Hotel> availableHotels = hotelRepository.findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqualAndActiveTrue(
                 destination,
                 Booked.NO,
@@ -69,17 +68,23 @@ public class HotelService implements IHotelService {
                 requestDateTo
         );
 
-        // Se mapea cada entidad Hotel a HotelDTOResponse utilizando el mapper configurado
         return availableHotels.stream()
-                .map(hotel -> hotelMapper.entityToDTO(hotel))
+                .map(hotelMapper::entityToDTO)
                 .toList();
     }
 
     @Override
     @Transactional
     public String updateHotel(Long id, HotelDTORequest hotelDTORequest) {
+        if (id == null || hotelDTORequest == null) {
+            throw new RuntimeException("Datos inválidos para actualizar el hotel. No se pudo actualizar.");
+        }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+                .orElse(null);
+
+        if (hotel == null) {
+            throw new RuntimeException("No se encontró el hotel con ID " + id + ". No se pudo actualizar.");
+        }
 
         hotel.setHotelCode(hotelDTORequest.getHotelCode());
         hotel.setName(hotelDTORequest.getName());
@@ -96,12 +101,18 @@ public class HotelService implements IHotelService {
     @Override
     @Transactional
     public String deleteHotel(Long id) {
+        if (id == null) {
+            throw new RuntimeException("ID del hotel no puede ser nulo. No se pudo eliminar.");
+        }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+                .orElse(null);
+
+        if (hotel == null) {
+            throw new RuntimeException("No se encontró el hotel con ID " + id + ". No se pudo eliminar.");
+        }
+
         hotel.setActive(false);
         hotelRepository.save(hotel);
         return "Hotel eliminado con éxito";
     }
-
 }
-
