@@ -9,4 +9,5 @@ public interface IFlightBookingService {
 
     String bookFlight(FlightBookingRequestDTO request);
     List<FlightBookingResponseDTO> findAll();
+
 }

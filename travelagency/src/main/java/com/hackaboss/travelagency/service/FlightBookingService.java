@@ -10,6 +10,7 @@ import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.FlightBookingRepository;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import com.hackaboss.travelagency.repository.UserRepository;
+import com.hackaboss.travelagency.util.Booked;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -40,9 +41,10 @@ public class FlightBookingService implements IFlightBookingService {
                     .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
         } else {
             flight = flightRepository.findByFlightNumberAndActiveTrue(request.getFlight().getFlightNumber())
-                    .orElseThrow(() -> new EntityNotFoundException("Vueldo no encontrado"));
+                    .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
         }
 
+        // Procesar los pasajeros
         List<User> passengers = new ArrayList<>();
         for (UserDTORequest passengerDTO : request.getPassengers()) {
             User passenger = userRepository.findByDni(passengerDTO.getDni())
@@ -59,16 +61,24 @@ public class FlightBookingService implements IFlightBookingService {
             passengers.add(passenger);
         }
 
-        passengers = userRepository.saveAll(passengers);
+        // Verificar si ya existe una reserva activa para este vuelo y estos pasajeros
+        boolean existsBooking = flightBookingRepository.existsByFlightAndPassengersInAndActiveTrue(flight, passengers);
+        if (existsBooking) {
+            return "Ya existe una reserva activa para este vuelo con los mismos pasajeros.";
+        }
 
+        // Crear la reserva
         FlightBooking booking = flightBookingMapper.requestToEntity(request);
         booking.setFlight(flight);
         booking.setPassengers(passengers);
         booking = flightBookingRepository.save(booking);
 
-        double totalAmount = flight.getRatePerPerson() * passengers.size();
+        flightRepository.save(flight);
+
+        Double totalAmount = flight.getRatePerPerson() * passengers.size();
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
     }
+
 
     @Override
     public List<FlightBookingResponseDTO> findAll() {

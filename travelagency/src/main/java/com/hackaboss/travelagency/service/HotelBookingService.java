@@ -62,6 +62,13 @@ public class HotelBookingService implements IHotelBookingService {
             hotelEntity = hotelOpt.get();
         }
 
+        // Validar si ya existe una reserva para este hotel en las mismas fechas
+        boolean existsBooking = hotelBookingRepository.existsByHotelAndDateFromAndDateToAndActiveTrue(
+                hotelEntity, dto.getHotel().getDateFrom(), dto.getHotel().getDateTo());
+        if (existsBooking) {
+            return "Ya existe una reserva activa para este hotel en las mismas fechas.";
+        }
+
         // Procesar los hosts: buscar por DNI y crear si no existen
         List<User> hostEntities = new ArrayList<>();
         for (UserDTORequest hostDTO : dto.getHosts()) {
