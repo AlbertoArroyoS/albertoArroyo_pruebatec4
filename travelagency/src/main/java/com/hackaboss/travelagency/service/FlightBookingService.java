@@ -13,10 +13,8 @@ import com.hackaboss.travelagency.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +66,7 @@ public class FlightBookingService implements IFlightBookingService {
         booking.setPassengers(passengers);
         booking = flightBookingRepository.save(booking);
 
-        Double totalAmount = flight.getRatePerPerson() * passengers.size();
+        double totalAmount = flight.getRatePerPerson() * passengers.size();
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
     }
 
@@ -77,6 +75,6 @@ public class FlightBookingService implements IFlightBookingService {
         List<FlightBooking> activeBookings = flightBookingRepository.findByActiveTrue();
         return activeBookings.stream()
                 .map(flightBookingMapper::entityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

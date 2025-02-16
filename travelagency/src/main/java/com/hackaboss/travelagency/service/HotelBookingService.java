@@ -10,6 +10,7 @@ import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.repository.UserRepository;
+import com.hackaboss.travelagency.util.Booked;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -88,6 +89,11 @@ public class HotelBookingService implements IHotelBookingService {
 
         // Guardar la reserva y retornar mensaje
         booking = hotelBookingRepository.save(booking);
+
+        // Actualizar el estado del hotel a "SI" en el campo booked
+        hotelEntity.setBooked(Booked.SI);
+        hotelRepository.save(hotelEntity);
+
         return "Reserva creada correctamente con ID: " + booking.getId();
     }
 
