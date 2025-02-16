@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
@@ -16,4 +17,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             LocalDate departureDate,
             LocalDate returnDate
     );
+
+    Optional<Flight> findByIdAndActiveTrue(Long id);
+    Optional<Flight> findByFlightNumberAndActiveTrue(String flightNumber);
 }

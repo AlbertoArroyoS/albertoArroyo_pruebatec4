@@ -30,10 +30,6 @@ public class FlightBooking extends BaseEntity {
     private Flight flight;
 
     // Relación con usuarios
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @ManyToMany
     @JoinTable(name = "flight_booking_users",
             joinColumns = @JoinColumn(name = "flight_booking_id"),
