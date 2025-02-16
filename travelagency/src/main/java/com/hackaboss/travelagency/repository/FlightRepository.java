@@ -20,4 +20,5 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     Optional<Flight> findByIdAndActiveTrue(Long id);
     Optional<Flight> findByFlightNumberAndActiveTrue(String flightNumber);
+    List<Flight> findByActiveTrue();
 }
