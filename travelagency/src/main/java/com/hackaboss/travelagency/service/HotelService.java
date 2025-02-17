@@ -11,7 +11,6 @@ import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.util.Booked;
 import com.hackaboss.travelagency.util.RoomType;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

@@ -6,9 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-
+@Getter
+@Setter
 @Data
 @Builder
 public class HotelDTORequest {
@@ -44,5 +48,6 @@ public class HotelDTORequest {
 
     @NotNull(message = "La fecha de fin no puede ser nula")
     private LocalDate dateTo;
+
 
 }
