@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.controller;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
+import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.service.HotelService;
 import com.hackaboss.travelagency.service.IHotelService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,13 +32,16 @@ public class HotelController {
     @Operation(summary = "Listar todos los hoteles")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Hoteles listados correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se pudieron listar los hoteles")
+            @ApiResponse(responseCode = "404", description = "No se encontraron hoteles"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<List<HotelDTOResponse>> getAllHotels() {
         try {
             return ResponseEntity.ok(hotelService.findAll());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -91,7 +95,7 @@ public class HotelController {
     })
     public ResponseEntity<HotelDTOResponse> getHotelById(@PathVariable Long id) {
         Optional<HotelDTOResponse> hotelOpt = hotelService.findById(id);
-        return hotelOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+        return hotelOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
 

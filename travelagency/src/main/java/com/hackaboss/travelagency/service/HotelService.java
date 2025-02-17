@@ -34,10 +34,16 @@ public class HotelService implements IHotelService {
 
     @Override
     public List<HotelDTOResponse> findAll() {
-        return hotelRepository.findByActiveTrue().stream()
+        List<HotelDTOResponse> hotels = hotelRepository.findByActiveTrue().stream()
                 .map(hotelMapper::entityToDTO)
                 .toList();
+
+        if (hotels.isEmpty()) {
+            throw new EntityNotFoundException("No hay hoteles disponibles.");
+        }
+        return hotels;
     }
+
 
     @Override
     public String createHotel(HotelDTORequest hotelDTORequest) {
