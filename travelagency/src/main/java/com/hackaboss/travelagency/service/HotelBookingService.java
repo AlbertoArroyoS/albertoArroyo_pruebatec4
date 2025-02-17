@@ -55,11 +55,17 @@ public class HotelBookingService implements IHotelBookingService {
         Hotel hotelEntity = hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode())
                         .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
 
+        //Comprobar si existe por existsByHotelAndDateFromAndDateToAndActiveTrue
+        boolean existHotel = hotelBookingRepository.existsByHotelAndDateFromAndDateToAndActiveTrue(hotelEntity, dto.getHotel().getDateFrom(), dto.getHotel().getDateTo());
+        if (existHotel) {
+            throw new EntityNotDeletableException("Ya existe una reserva activa para este hotel en las mismas fechas.");
+        }
+
         //Comprobar si ya existe una reserva activa para el hotel
         Integer resultHotelId = hotelBookingRepository.countByHotelIdNative(hotelEntity.getId());
         boolean existHotelId = resultHotelId != null && resultHotelId > 0;
         if (existHotelId) {
-            throw new EntityNotDeletableException("Ya existe una reserva activa para este hotel en las mismas fechas.");
+            throw new EntityNotDeletableException("Ya existe una reserva activa para este hotel.");
         }
 
         List<User> hostEntities = new ArrayList<>();

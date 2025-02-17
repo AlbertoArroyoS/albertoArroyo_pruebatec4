@@ -50,5 +50,79 @@ INSERT INTO flights (flight_number, origin, destination, seat_type, rate_per_per
 ('BOIG-6567', 'Bogotá', 'Iguazú', 'Business', 570, '2024-02-15', '2024-02-28', 1),
 ('BOBA-6567', 'Bogotá', 'Buenos Aires', 'Economy', 398, '2024-03-01', '2024-03-14', 1),
 ('BOMA-4442', 'Bogotá', 'Madrid', 'Economy', 1100, '2024-02-10', '2024-02-24', 1),
-('MEMI-9986', 'Medellín', 'Miami', 'Business', 1164, '2024-04-17', '2024-05-02', 1);
+('MEMI-9986', 'Medellín', 'Miami', 'Business', 1164, '2024-04-17', '2024-05-02', 0);
 
+
+
+
+//USUARIOS
+
+
+
+-- Insertar usuarios de ejemplo
+INSERT INTO users (active, dni, email, name, password, phone, role, surname, username)
+VALUES 
+    (TRUE, '12345678A', 'user1@example.com', 'John', 'hashed_password1', '123456789', 'ADMIN', 'Doe', 'johndoe'),
+    (TRUE, '87654321B', 'user2@example.com', 'Alice', 'hashed_password2', '987654321', 'USER', 'Smith', 'alicesmith'),
+    (FALSE, '11223344C', 'user3@example.com', 'Bob', 'hashed_password3', '654987321', 'USER', 'Brown', 'bobbrown'),
+    (TRUE, '55667788D', 'user4@example.com', 'Eva', 'hashed_password4', '789456123', 'USER', 'White', 'evawhite');
+
+
+//Crear reserva de hotel_code
+{
+  "hotel": {
+    "hotelCode": "AR-0002",
+    "name": "Atlantis Resort",
+    "city": "Miami",
+    "roomType": "DOBLE",
+    "ratePerNight": 630,
+    "dateFrom": "2024-02-10",
+    "dateTo": "2024-03-20"
+  },
+  "hosts": [
+    {
+      "name": "Alberto",
+      "surname": "Arroyo",
+      "phone": "123456789",
+      "dni": "12345678B"
+    },
+    {
+      "name": "Ana",
+      "surname": "Pérez",
+      "phone": "987654321",
+      "dni": "87654321Z"
+    },
+    {
+      "name": "Luis",
+      "surname": "Martinez",
+      "phone": "555666777",
+      "dni": "23456789C"
+    }
+  ]
+}
+//otra reserva
+{
+  "hotel": {
+    "hotelCode": "HTL-54321",
+    "name": "Hotel Sunrise",
+    "city": "Barcelona",
+    "roomType": "SUITE",
+    "ratePerNight": 200,
+    "dateFrom": "2024-07-01",
+    "dateTo": "2024-07-20"
+  },
+  "hosts": [
+    {
+      "name": "Carlos",
+      "surname": "Fernández",
+      "phone": "654321987",
+      "dni": "11223344X"
+    },
+    {
+      "name": "María",
+      "surname": "López",
+      "phone": "777888999",
+      "dni": "55667788Y"
+    }
+  ]
+}

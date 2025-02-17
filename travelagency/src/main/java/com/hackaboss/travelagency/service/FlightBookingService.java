@@ -3,6 +3,7 @@ package com.hackaboss.travelagency.service;
 import com.hackaboss.travelagency.dto.request.FlightBookingRequestDTO;
 import com.hackaboss.travelagency.dto.request.UserDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightBookingResponseDTO;
+import com.hackaboss.travelagency.exception.EntityNotDeletableException;
 import com.hackaboss.travelagency.mapper.FlightBookingMapper;
 import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.model.FlightBooking;
@@ -62,7 +63,7 @@ public class FlightBookingService implements IFlightBookingService {
         // Verificar si ya existe una reserva activa para este vuelo y estos pasajeros
         boolean existsBooking = flightBookingRepository.existsByFlightAndPassengersInAndActiveTrue(flight, passengers);
         if (existsBooking) {
-            return "Ya existe una reserva activa para este vuelo con los mismos pasajeros.";
+            throw new EntityNotDeletableException("Ya existe una reserva activa para este vuelo con los mismos pasajeros.");
         }
 
         // Crear la reserva
@@ -76,6 +77,7 @@ public class FlightBookingService implements IFlightBookingService {
         Double totalAmount = flight.getRatePerPerson() * passengers.size();
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
     }
+
 
 
     @Override
