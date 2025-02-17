@@ -2,6 +2,8 @@ package com.hackaboss.travelagency.controller;
 
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
+import com.hackaboss.travelagency.exception.EntityNotFoundException;
+import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.service.IFlightService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -97,7 +99,8 @@ public class FlightController {
     @Operation(summary = "Obtiene el listado de vuelos disponibles, por origen, destino y rango de fechas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Vuelos disponibles listados correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se encontraron vuelos disponibles")
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
+            @ApiResponse(responseCode = "404", description = "No se encontraron vuelos disponibles")
     })
     public ResponseEntity<List<FlightDTOResponse>> findAvailableFlights(
             @RequestParam("dateFrom") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateFrom,
@@ -105,9 +108,13 @@ public class FlightController {
             @RequestParam("origin") String origin,
             @RequestParam("destination") String destination) {
         try {
-            return ResponseEntity.ok(flightService.findAvailableFlights(origin, destination, dateFrom, dateTo));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            List<FlightDTOResponse> flights = flightService.findAvailableFlights(origin, destination, dateFrom, dateTo);
+            return ResponseEntity.ok(flights);
+        } catch (InvalidDataException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 BAD REQUEST si los parámetros son inválidos
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 NOT FOUND si no hay vuelos disponibles
         }
     }
+
 }

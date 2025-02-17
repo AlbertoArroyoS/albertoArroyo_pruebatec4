@@ -116,8 +116,13 @@ public class FlightService implements IFlightService {
                 origin, destination, departureDate, returnDate
         );
 
+        if (availableFlights.isEmpty()) {
+            throw new EntityNotFoundException("No hay vuelos disponibles.");
+        }
+
         return availableFlights.stream()
                 .map(flightMapper::entityToDTO)
                 .toList();
     }
+
 }

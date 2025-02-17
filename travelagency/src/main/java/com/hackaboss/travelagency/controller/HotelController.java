@@ -103,16 +103,17 @@ public class HotelController {
     @Operation(summary = "Buscar habitaciones disponibles")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Habitaciones disponibles listadas correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se pudieron listar las habitaciones disponibles")
+            @ApiResponse(responseCode = "404", description = "No se encontraron habitaciones disponibles en esas fechas y destino")
     })
     public ResponseEntity<List<HotelDTOResponse>> getAvailableRooms(
             @RequestParam("dateFrom") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateFrom,
             @RequestParam("dateTo") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateTo,
             @RequestParam("destination") String destination) {
-        try {
-            return ResponseEntity.ok(hotelService.findAvailableRooms(destination, dateFrom, dateTo));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+
+        List<HotelDTOResponse> availableHotels = hotelService.findAvailableRooms(destination, dateFrom, dateTo);
+        if (availableHotels.isEmpty()) {
+            throw new EntityNotFoundException("No hay hoteles disponibles en esas fechas y destino.");
         }
+        return ResponseEntity.ok(availableHotels);
     }
 }
