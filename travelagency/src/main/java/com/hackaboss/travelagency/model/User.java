@@ -1,7 +1,6 @@
 package com.hackaboss.travelagency.model;
 
 import com.hackaboss.travelagency.model.base.BaseEntity;
-import com.hackaboss.travelagency.util.Booked;
 import com.hackaboss.travelagency.util.Role;
 import jakarta.persistence.*;
 import lombok.*;

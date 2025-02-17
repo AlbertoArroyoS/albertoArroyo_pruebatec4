@@ -5,7 +5,6 @@ import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
 import com.hackaboss.travelagency.model.HotelBooking;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import java.time.temporal.ChronoUnit; // Opcional si se usa el nombre completo en la expresión
 
 @Mapper(componentModel = "spring", uses = {HotelMapper.class, UserMapper.class})
 public interface HotelBookingMapper {
