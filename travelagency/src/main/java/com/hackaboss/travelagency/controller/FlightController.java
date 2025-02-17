@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/agency/flights")
@@ -95,9 +94,11 @@ public class FlightController {
             @ApiResponse(responseCode = "404", description = "No se encontró el vuelo")
     })
     public ResponseEntity<FlightDTOResponse> findFlightById(@PathVariable Long id) {
-        Optional<FlightDTOResponse> flightOpt = flightService.findById(id);
-        return flightOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+        FlightDTOResponse flight = flightService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el vuelo con id: " + id));
+        return ResponseEntity.ok(flight);
     }
+
 
     @GetMapping("/available")
     @Operation(summary = "Obtiene el listado de vuelos disponibles, por origen, destino y rango de fechas")

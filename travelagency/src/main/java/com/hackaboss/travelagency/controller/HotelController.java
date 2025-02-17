@@ -98,8 +98,9 @@ public class HotelController {
             @ApiResponse(responseCode = "404", description = "No se encontró el hotel")
     })
     public ResponseEntity<HotelDTOResponse> getHotelById(@PathVariable Long id) {
-        Optional<HotelDTOResponse> hotelOpt = hotelService.findById(id);
-        return hotelOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        HotelDTOResponse hotel = hotelService.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el hotel con id: " + id));
+        return ResponseEntity.ok(hotel);
     }
 
 
