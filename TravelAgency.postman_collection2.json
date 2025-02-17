@@ -1,0 +1,451 @@
+{
+	"info": {
+		"_postman_id": "5063dea8-d435-40bd-9a8e-5a31d4c18a40",
+		"name": "TravelAgency",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34145638"
+	},
+	"item": [
+		{
+			"name": "Hotel",
+			"item": [
+				{
+					"name": "1.getAllHotels",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createHotel",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"hotelCode\": \"AR-0002\",\r\n  \"name\": \"Atlantis Resort\",\r\n  \"city\": \"Miami\",\r\n  \"roomType\": \"DOBLE\",\r\n  \"ratePerNight\": 630,\r\n  \"dateFrom\": \"2024-02-10\",\r\n  \"dateTo\": \"2024-03-20\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2.getAvailableRooms",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels/rooms?dateFrom=20/02/2024&dateTo=25/02/2024&destination=Barcelona",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels",
+								"rooms"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "20/02/2024"
+								},
+								{
+									"key": "dateTo",
+									"value": "25/02/2024"
+								},
+								{
+									"key": "destination",
+									"value": "Barcelona"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateHotel",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"hotelCode\": \"HTL-54321\",\r\n  \"name\": \"Hotel Sunrise\",\r\n  \"city\": \"Barcelona\",\r\n  \"roomType\": \"SUITE\",\r\n  \"ratePerNight\": 200.00,\r\n  \"dateFrom\": \"2024-07-01\",\r\n  \"dateTo\": \"2024-07-20\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels/edit/111",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels",
+								"edit",
+								"111"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteHotel",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/hotels/delete/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"hotels",
+								"delete",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Flight",
+			"item": [
+				{
+					"name": "4.getAllFlights",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/flights",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createFlight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"flightNumber\": \"BAMI-9999\",\r\n  \"origin\": \"Ciudad Real\",\r\n  \"destination\": \"Miami\",\r\n  \"seatType\": \"Economy\",\r\n  \"ratePerPerson\": 950.00,\r\n  \"departureDate\": \"2024-02-10\",\r\n  \"returnDate\": \"2024-02-15\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/flights/new",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "5.findAvailableFlights",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/flights/available?dateFrom=10/02/2024&dateTo=20/02/2024&origin=Miami&destination=Madrid",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights",
+								"available"
+							],
+							"query": [
+								{
+									"key": "dateFrom",
+									"value": "10/02/2024"
+								},
+								{
+									"key": "dateTo",
+									"value": "20/02/2024"
+								},
+								{
+									"key": "origin",
+									"value": "Miami"
+								},
+								{
+									"key": "destination",
+									"value": "Madrid"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateFlight",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"flightNumber\": \"BAMI-9999\",\r\n  \"origin\": \"Ciudad Real\",\r\n  \"destination\": \"Madrid\",\r\n  \"seatType\": \"Business\",\r\n  \"ratePerPerson\": 700.00,\r\n  \"departureDate\": \"2024-02-11\",\r\n  \"returnDate\": \"2024-02-16\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/flights/edit/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights",
+								"edit",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "findFlightById",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/flights/13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteFlight",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/flights/delete/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flights",
+								"delete",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RoomBooking",
+			"item": [
+				{
+					"name": "getAllHotelBookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/room-booking",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"room-booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3.createHotelBooking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"hotel\": {\r\n    \"hotelCode\": \"AR-0002\",\r\n    \"name\": \"Atlantis Resort\",\r\n    \"city\": \"Miami\",\r\n    \"roomType\": \"DOBLE\",\r\n    \"ratePerNight\": 630,\r\n    \"dateFrom\": \"2024-02-10\",\r\n    \"dateTo\": \"2024-03-20\"\r\n  },\r\n  \"hosts\": [\r\n    {\r\n      \"name\": \"Alberto\",\r\n      \"surname\": \"Arroyo\",\r\n      \"phone\": \"123456789\",\r\n      \"dni\": \"12345678B\"\r\n    },\r\n    {\r\n      \"name\": \"Ana\",\r\n      \"surname\": \"Pérez\",\r\n      \"phone\": \"987654321\",\r\n      \"dni\": \"87654321Z\"\r\n    },\r\n    {\r\n      \"name\": \"Luis\",\r\n      \"surname\": \"Martinez\",\r\n      \"phone\": \"555666777\",\r\n      \"dni\": \"23456789C\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/room-booking/new",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"room-booking",
+								"new"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FlightBooking",
+			"item": [
+				{
+					"name": "6.createFlightBooking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"flight\": {\r\n    \"flightNumber\": \"BAMI-1235\"\r\n  },\r\n  \"passengers\": [\r\n    {\r\n      \"dni\": \"12345678A\",\r\n      \"name\": \"John\",\r\n      \"surname\": \"Doe\",\r\n      \"phone\": \"123456789\"\r\n    },\r\n    {\r\n      \"dni\": \"87654321B\",\r\n      \"name\": \"Alice\",\r\n      \"surname\": \"Smith\",\r\n      \"phone\": \"987654321\"\r\n    }\r\n  ]\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/agency/flight-booking/new",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flight-booking",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllFlightBookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/agency/flight-booking",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"agency",
+								"flight-booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

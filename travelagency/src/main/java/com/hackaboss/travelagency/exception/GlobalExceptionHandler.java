@@ -57,5 +57,13 @@ public class GlobalExceptionHandler {
         errorResponse.put(ERROR, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
+
+    // Captura EntityExistsException (cuando ya existe un hotel con el mismo código y nombre)
+    @ExceptionHandler(EntityExistsException.class)
+    public ResponseEntity<Map<String, String>> handleEntityExistsException(EntityExistsException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(ERROR, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
 }
 

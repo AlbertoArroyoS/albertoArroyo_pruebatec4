@@ -27,4 +27,6 @@ public interface HotelRepository extends JpaRepository<Hotel, Long> {
             LocalDate requestDateTo
     );
 
+    Optional<Hotel> findByHotelCodeAndName(String hotelCode, String name);
+
 }

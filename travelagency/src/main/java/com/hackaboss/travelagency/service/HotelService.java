@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
+import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.mapper.HotelMapper;
@@ -48,6 +49,15 @@ public class HotelService implements IHotelService {
     public String createHotel(HotelDTORequest hotelDTORequest) {
         if (hotelDTORequest == null) {
             throw new InvalidDataException("Datos del hotel no pueden ser nulos. No se pudo crear.");
+        }
+        // Comprobar si ya existe un hotel con el mismo hotelCode y name
+        Optional<Hotel> existingHotel = hotelRepository.findByHotelCodeAndName(
+                hotelDTORequest.getHotelCode(), hotelDTORequest.getName()
+        );
+
+        if (existingHotel.isPresent()) {
+            throw new EntityExistsException("El hotel con código '" + hotelDTORequest.getHotelCode() +
+                    "' y nombre '" + hotelDTORequest.getName() + "' ya existe.");
         }
         Hotel hotel = hotelMapper.requestToEntity(hotelDTORequest);
         hotelRepository.save(hotel);

@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.controller;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
+import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.service.HotelService;
 import com.hackaboss.travelagency.service.IHotelService;
@@ -49,11 +50,14 @@ public class HotelController {
     @Operation(summary = "Crear un nuevo hotel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Hotel creado correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se pudo crear el hotel")
+            @ApiResponse(responseCode = "400", description = "No se pudo crear el hotel"),
+            @ApiResponse(responseCode = "409", description = "El hotel ya existe")
     })
     public ResponseEntity<String> createHotel(@Valid @RequestBody HotelDTORequest hotelDTORequest) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(hotelService.createHotel(hotelDTORequest));
+        } catch (EntityExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
