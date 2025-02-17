@@ -15,6 +15,10 @@ public interface HotelBookingRepository extends JpaRepository<HotelBooking, Long
 
     List<HotelBooking> findByActiveTrue();
     boolean existsByHotelAndActiveTrue(Hotel hotel);
+    boolean existsByHotel_Id(Long hotelId);
+    @Query(value = "SELECT COUNT(*) FROM hotel_bookings WHERE hotel_id = ?1 AND active = 1", nativeQuery = true)
+    Integer countByHotelIdNative(Long hotelId);
+
 
     @Query("SELECT CASE WHEN COUNT(hb) > 0 THEN true ELSE false END " +
             "FROM HotelBooking hb " +

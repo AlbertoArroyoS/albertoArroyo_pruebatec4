@@ -10,4 +10,5 @@ public interface IHotelBookingService {
     List<HotelBookingDTOResponse> findAll();
     String createHotelBooking(HotelBookingDTORequest hotelBookingDTORequest);
 
+
 }

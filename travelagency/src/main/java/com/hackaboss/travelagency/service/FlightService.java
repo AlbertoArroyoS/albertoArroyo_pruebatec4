@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
+import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.mapper.FlightMapper;
@@ -42,6 +43,13 @@ public class FlightService implements IFlightService {
         if (flightDTORequest == null) {
             throw new InvalidDataException("Datos del vuelo no pueden ser nulos. No se pudo crear.");
         }
+        // Comprobar si ya existe un vuelo con el mismo flightNumber
+        Optional<Flight> existingFlight = flightRepository.findByFlightNumber(flightDTORequest.getFlightNumber());
+
+        if (existingFlight.isPresent()) {
+            throw new EntityExistsException("El vuelo con número '" + flightDTORequest.getFlightNumber() + "' ya existe.");
+        }
+
         Flight flight = flightMapper.requestToEntity(flightDTORequest);
         flightRepository.save(flight);
         return "Vuelo creado con éxito";

@@ -9,7 +9,6 @@ import com.hackaboss.travelagency.service.IHotelBookingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +41,6 @@ public class HotelBookingController {
         }
     }
 
-    //Post
     @PostMapping("/new")
     @Operation(summary = "Crear una reserva de hotel")
     @ApiResponses(value = {
@@ -63,7 +61,7 @@ public class HotelBookingController {
         } catch (EntityNotDeletableException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocurrió un error inesperado.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

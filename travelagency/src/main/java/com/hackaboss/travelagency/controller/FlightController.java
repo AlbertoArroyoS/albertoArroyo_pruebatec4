@@ -2,6 +2,7 @@ package com.hackaboss.travelagency.controller;
 
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
+import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.service.IFlightService;
@@ -46,11 +47,14 @@ public class FlightController {
     @Operation(summary = "Crea un nuevo vuelo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Vuelo creado correctamente"),
-            @ApiResponse(responseCode = "400", description = "No se pudo crear el vuelo")
+            @ApiResponse(responseCode = "400", description = "No se pudo crear el vuelo"),
+            @ApiResponse(responseCode = "409", description = "El vuelo ya existe")
     })
     public ResponseEntity<String> createFlight(@Valid @RequestBody FlightDTORequest flightDTORequest) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(flightService.createFlight(flightDTORequest));
+        } catch (EntityExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

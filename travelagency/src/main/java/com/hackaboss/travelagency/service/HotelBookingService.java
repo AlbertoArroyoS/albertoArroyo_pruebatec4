@@ -43,28 +43,25 @@ public class HotelBookingService implements IHotelBookingService {
                 .toList();
     }
 
+
     @Override
     @Transactional
     public String createHotelBooking(HotelBookingDTORequest dto) {
+        // Validar datos
         if (dto == null || dto.getHotel() == null) {
             throw new InvalidDataException("Los datos de la reserva no pueden ser nulos.");
         }
-
-        // Buscar el hotel
-        Hotel hotelEntity = (dto.getHotel().getId() != null) ?
-                hotelRepository.findByIdAndActiveTrue(dto.getHotel().getId())
-                        .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado")) :
-                hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode())
+        //Comprobar si el hotel existe
+        Hotel hotelEntity = hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode())
                         .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
 
-        // Verificar si ya existe una reserva en las mismas fechas
-        boolean existsBooking = hotelBookingRepository.existsByHotelAndDateFromAndDateToAndActiveTrue(
-                hotelEntity, dto.getHotel().getDateFrom(), dto.getHotel().getDateTo());
-        if (existsBooking) {
+        //Comprobar si ya existe una reserva activa para el hotel
+        Integer resultHotelId = hotelBookingRepository.countByHotelIdNative(hotelEntity.getId());
+        boolean existHotelId = resultHotelId != null && resultHotelId > 0;
+        if (existHotelId) {
             throw new EntityNotDeletableException("Ya existe una reserva activa para este hotel en las mismas fechas.");
         }
 
-        // Procesar huéspedes y guardar reserva
         List<User> hostEntities = new ArrayList<>();
         for (UserDTORequest hostDTO : dto.getHosts()) {
             User host = userRepository.findByDni(hostDTO.getDni())
@@ -81,13 +78,11 @@ public class HotelBookingService implements IHotelBookingService {
             hostEntities.add(host);
         }
 
-        // Guardar la reserva
         HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
         booking.setHotel(hotelEntity);
         booking.setHosts(hostEntities);
         booking = hotelBookingRepository.save(booking);
 
-        // Actualizar estado del hotel
         hotelEntity.setBooked(Booked.SI);
         hotelRepository.save(hotelEntity);
 
