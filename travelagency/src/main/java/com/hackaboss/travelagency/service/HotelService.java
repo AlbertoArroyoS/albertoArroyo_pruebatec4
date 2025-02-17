@@ -2,13 +2,14 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
+import com.hackaboss.travelagency.exception.EntityNotFoundException;
+import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.mapper.HotelMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.util.Booked;
 import com.hackaboss.travelagency.util.RoomType;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class HotelService implements IHotelService {
     @Override
     public String createHotel(HotelDTORequest hotelDTORequest) {
         if (hotelDTORequest == null) {
-            throw new RuntimeException("Datos del hotel no pueden ser nulos. No se pudo crear.");
+            throw new InvalidDataException("Datos del hotel no pueden ser nulos. No se pudo crear.");
         }
         Hotel hotel = hotelMapper.requestToEntity(hotelDTORequest);
         hotelRepository.save(hotel);
@@ -51,7 +52,7 @@ public class HotelService implements IHotelService {
     @Override
     public Optional<HotelDTOResponse> findById(Long id) {
         if (id == null) {
-            throw new RuntimeException("El campo ID no puede ser nulo. No se pudo buscar.");
+            throw new InvalidDataException("El campo ID no puede ser nulo. No se pudo buscar.");
         }
         return hotelRepository.findByIdAndActiveTrue(id)
                 .map(hotelMapper::entityToDTO);
@@ -60,7 +61,7 @@ public class HotelService implements IHotelService {
     @Override
     public List<HotelDTOResponse> findAvailableRooms(String destination, LocalDate requestDateFrom, LocalDate requestDateTo) {
         if (destination == null || requestDateFrom == null || requestDateTo == null || requestDateFrom.isAfter(requestDateTo)) {
-            throw new RuntimeException("Parámetros inválidos: verifique destino y rango de fechas.");
+            throw new InvalidDataException("Parámetros inválidos: verifique destino y rango de fechas.");
         }
 
         List<Hotel> availableHotels = hotelRepository.findByCityAndBookedAndDateFromLessThanEqualAndDateToGreaterThanEqualAndActiveTrue(
@@ -79,13 +80,13 @@ public class HotelService implements IHotelService {
     @Transactional
     public String updateHotel(Long id, HotelDTORequest hotelDTORequest) {
         if (id == null || hotelDTORequest == null) {
-            throw new RuntimeException("Datos inválidos para actualizar el hotel. No se pudo actualizar.");
+            throw new InvalidDataException("Datos inválidos para actualizar el hotel. No se pudo actualizar.");
         }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
                 .orElse(null);
 
         if (hotel == null) {
-            throw new RuntimeException("No se encontró el hotel con ID " + id + ". No se pudo actualizar.");
+            throw new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo actualizar.");
         }
 
         hotel.setHotelCode(hotelDTORequest.getHotelCode());
@@ -104,13 +105,13 @@ public class HotelService implements IHotelService {
     @Transactional
     public String deleteHotel(Long id) {
         if (id == null) {
-            throw new RuntimeException("ID del hotel no puede ser nulo. No se pudo eliminar.");
+            throw new InvalidDataException("ID del hotel no puede ser nulo. No se pudo eliminar.");
         }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
                 .orElse(null);
 
         if (hotel == null) {
-            throw new RuntimeException("No se encontró el hotel con ID " + id + ". No se pudo eliminar.");
+            throw new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo eliminar.");
         }
 
         // Verificar si el hotel tiene reservas activas

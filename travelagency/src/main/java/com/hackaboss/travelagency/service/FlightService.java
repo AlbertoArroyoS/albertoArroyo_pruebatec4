@@ -2,6 +2,8 @@ package com.hackaboss.travelagency.service;
 
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
+import com.hackaboss.travelagency.exception.InvalidDataException;
+import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.mapper.FlightMapper;
 import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.repository.FlightBookingRepository;
@@ -38,7 +40,7 @@ public class FlightService implements IFlightService {
     @Transactional
     public String createFlight(FlightDTORequest flightDTORequest) {
         if (flightDTORequest == null) {
-            throw new RuntimeException("Datos del vuelo no pueden ser nulos. No se pudo crear.");
+            throw new InvalidDataException("Datos del vuelo no pueden ser nulos. No se pudo crear.");
         }
         Flight flight = flightMapper.requestToEntity(flightDTORequest);
         flightRepository.save(flight);
@@ -49,13 +51,13 @@ public class FlightService implements IFlightService {
     @Transactional
     public String updateFlight(Long id, FlightDTORequest flightDTORequest) {
         if (id == null || flightDTORequest == null) {
-            throw new RuntimeException("Datos inválidos para actualizar el vuelo. No se pudo actualizar.");
+            throw new InvalidDataException("Datos inválidos para actualizar el vuelo. No se pudo actualizar.");
         }
         Flight flight = flightRepository.findByIdAndActiveTrue(id)
                 .orElse(null);
 
         if (flight == null) {
-            throw new RuntimeException("No se encontró el vuelo con ID " + id + ". No se pudo actualizar.");
+            throw new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo actualizar.");
         }
 
         flight.setFlightNumber(flightDTORequest.getFlightNumber());
@@ -74,13 +76,13 @@ public class FlightService implements IFlightService {
     @Transactional
     public String deleteFlight(Long id) {
         if (id == null) {
-            throw new RuntimeException("ID del vuelo no puede ser nulo. No se pudo eliminar.");
+            throw new InvalidDataException("ID del vuelo no puede ser nulo. No se pudo eliminar.");
         }
         Flight flight = flightRepository.findByIdAndActiveTrue(id)
                 .orElse(null);
 
         if (flight == null) {
-            throw new RuntimeException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar.");
+            throw new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar.");
         }
 
         // Verificar si el vuelo tiene reservas activas
@@ -98,7 +100,7 @@ public class FlightService implements IFlightService {
     @Override
     public Optional<FlightDTOResponse> findById(Long id) {
         if (id == null) {
-            throw new RuntimeException("El campo ID no puede ser nulo. No se pudo buscar.");
+            throw new InvalidDataException("El campo ID no puede ser nulo. No se pudo buscar.");
         }
         return flightRepository.findByIdAndActiveTrue(id)
                 .map(flightMapper::entityToDTO);
@@ -107,7 +109,7 @@ public class FlightService implements IFlightService {
     @Override
     public List<FlightDTOResponse> findAvailableFlights(String origin, String destination, LocalDate departureDate, LocalDate returnDate) {
         if (origin == null || destination == null || departureDate == null || returnDate == null || departureDate.isAfter(returnDate)) {
-            throw new RuntimeException("Parámetros inválidos: verifique origen, destino y fechas.");
+            throw new InvalidDataException("Parámetros inválidos: verifique origen, destino y fechas.");
         }
 
         List<Flight> availableFlights = flightRepository.findByOriginAndDestinationAndDepartureDateAndReturnDateAndActiveTrue(

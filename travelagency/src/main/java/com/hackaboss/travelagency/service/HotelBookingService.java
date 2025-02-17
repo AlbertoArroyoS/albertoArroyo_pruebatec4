@@ -40,7 +40,7 @@ public class HotelBookingService implements IHotelBookingService {
     public List<HotelBookingDTOResponse> findAll() {
         return hotelBookingRepository.findByActiveTrue().stream()
                 .map(hotelBookingMapper::entityToDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

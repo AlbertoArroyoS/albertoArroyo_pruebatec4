@@ -1,5 +1,6 @@
 package com.hackaboss.travelagency.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,9 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    //constante para el error
+    private static final String ERROR = "error";
 
     // Maneja errores de validación (como @NotBlank, @NotNull, etc.)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -29,4 +33,29 @@ public class GlobalExceptionHandler {
         errorResponse.put("roomType", ex.getMessage()); // Mensaje claro sobre el error
         return ResponseEntity.badRequest().body(errorResponse);
     }
+
+    // Captura DatosInvalidosException (cuando los datos son nulos o incorrectos)
+    @ExceptionHandler(InvalidDataException.class)
+    public ResponseEntity<Map<String, String>> handleDatosInvalidosException(InvalidDataException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(ERROR, ex.getMessage());
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    // Captura VueloNoEncontradoException (cuando un vuelo no existe)
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleVueloNoEncontradoException(EntityNotFoundException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(ERROR, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    // Captura VueloNoEliminableException (cuando un vuelo tiene reservas activas y no puede eliminarse)
+    @ExceptionHandler(EntityNotDeletableException.class)
+    public ResponseEntity<Map<String, String>> handleVueloNoEliminableException(EntityNotDeletableException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put(ERROR, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
 }
+
