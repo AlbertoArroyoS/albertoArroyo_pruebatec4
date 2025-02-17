@@ -21,12 +21,12 @@ public class FlightService implements IFlightService {
 
     private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
-    private final FlightBookingRepository flightBookingRepository;
+    //private final FlightBookingRepository flightBookingRepository;
 
-    public FlightService(FlightMapper flightMapper, FlightRepository flightRepository, FlightBookingRepository flightBookingRepository) {
+    public FlightService(FlightMapper flightMapper, FlightRepository flightRepository) {
         this.flightMapper = flightMapper;
         this.flightRepository = flightRepository;
-        this.flightBookingRepository = flightBookingRepository;
+        //this.flightBookingRepository = flightBookingRepository;
     }
 
 
@@ -94,7 +94,9 @@ public class FlightService implements IFlightService {
         }
 
         // Verificar si el vuelo tiene reservas activas
-        boolean hasBookings = flightBookingRepository.existsByFlightAndActiveTrue(flight);
+        //boolean hasBookings = flightBookingRepository.existsByFlightAndActiveTrue(flight);
+        boolean hasBookings = flight.getListFlightBookings().stream()
+                .anyMatch(booking -> booking.getFlight().getId().equals(id));
         if (hasBookings) {
             return "No se puede eliminar el vuelo, tiene reservas activas.";
         }

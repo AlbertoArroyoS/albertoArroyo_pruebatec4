@@ -23,12 +23,12 @@ public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
-    private final HotelBookingRepository hotelBookingRepository;
+    //private final HotelBookingRepository hotelBookingRepository;
 
-    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper, HotelBookingRepository hotelBookingRepository) {
+    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper) {
         this.hotelRepository = hotelRepository;
         this.hotelMapper = hotelMapper;
-        this.hotelBookingRepository = hotelBookingRepository;
+        //this.hotelBookingRepository = hotelBookingRepository;
     }
 
 
@@ -130,7 +130,11 @@ public class HotelService implements IHotelService {
         }
 
         // Verificar si el hotel tiene reservas activas
-        boolean hasBookings = hotelBookingRepository.existsByHotelAndActiveTrue(hotel);
+        //boolean hasBookings = hotelBookingRepository.existsByHotelAndActiveTrue(hotel);
+
+        boolean hasBookings = hotel.getListHotelBookings().stream()
+                .anyMatch(booking -> booking.getHotel().getId().equals(id));
+
         if (hasBookings) {
             return "No se puede eliminar el hotel, tiene reservas activas.";
         }
