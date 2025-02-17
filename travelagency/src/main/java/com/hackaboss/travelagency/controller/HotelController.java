@@ -4,7 +4,9 @@ import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
 import com.hackaboss.travelagency.service.HotelService;
 import com.hackaboss.travelagency.service.IHotelService;
-import jakarta.persistence.EntityNotFoundException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,11 @@ public class HotelController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar todos los hoteles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hoteles listados correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudieron listar los hoteles")
+    })
     public ResponseEntity<List<HotelDTOResponse>> getAllHotels() {
         try {
             return ResponseEntity.ok(hotelService.findAll());
@@ -35,6 +42,11 @@ public class HotelController {
     }
 
     @PostMapping("/new")
+    @Operation(summary = "Crear un nuevo hotel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Hotel creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo crear el hotel")
+    })
     public ResponseEntity<String> createHotel(@Valid @RequestBody HotelDTORequest hotelDTORequest) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(hotelService.createHotel(hotelDTORequest));
@@ -44,6 +56,11 @@ public class HotelController {
     }
 
     @PutMapping("/edit/{id}")
+    @Operation(summary = "Actualizar un hotel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hotel actualizado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo actualizar el hotel")
+    })
     public ResponseEntity<String> updateHotel(@PathVariable Long id, @Valid @RequestBody HotelDTORequest hotelDTORequest) {
         try {
             return ResponseEntity.ok(hotelService.updateHotel(id, hotelDTORequest));
@@ -53,6 +70,11 @@ public class HotelController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Eliminar un hotel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hotel eliminado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo eliminar el hotel")
+    })
     public ResponseEntity<String> deleteHotel(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(hotelService.deleteHotel(id));
@@ -62,17 +84,23 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getHotelById(@PathVariable Long id) {
+    @Operation(summary = "Buscar un hotel por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Hotel encontrado correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró el hotel")
+    })
+    public ResponseEntity<HotelDTOResponse> getHotelById(@PathVariable Long id) {
         Optional<HotelDTOResponse> hotelOpt = hotelService.findById(id);
-        if (hotelOpt.isPresent()) {
-            return ResponseEntity.ok(hotelOpt.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró hotel con ID: " + id);
-        }
+        return hotelOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
 
     @GetMapping("/rooms")
+    @Operation(summary = "Buscar habitaciones disponibles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Habitaciones disponibles listadas correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudieron listar las habitaciones disponibles")
+    })
     public ResponseEntity<List<HotelDTOResponse>> getAvailableRooms(
             @RequestParam("dateFrom") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateFrom,
             @RequestParam("dateTo") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateTo,

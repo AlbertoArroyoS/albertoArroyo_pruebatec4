@@ -3,6 +3,9 @@ package com.hackaboss.travelagency.service;
 import com.hackaboss.travelagency.dto.request.HotelBookingDTORequest;
 import com.hackaboss.travelagency.dto.request.UserDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelBookingDTOResponse;
+import com.hackaboss.travelagency.exception.EntityNotDeletableException;
+import com.hackaboss.travelagency.exception.EntityNotFoundException;
+import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.mapper.HotelBookingMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.model.HotelBooking;
@@ -46,66 +49,53 @@ public class HotelBookingService implements IHotelBookingService {
     @Override
     @Transactional
     public String createHotelBooking(HotelBookingDTORequest dto) {
-        // Buscar el hotel: se busca por id (si se envía) o por hotelCode
-        Hotel hotelEntity;
-        if (dto.getHotel().getId() != null) {
-            Optional<Hotel> hotelOpt = hotelRepository.findByIdAndActiveTrue(dto.getHotel().getId());
-            if (hotelOpt.isEmpty()) {
-                return "Hotel no encontrado";
-            }
-            hotelEntity = hotelOpt.get();
-        } else {
-            Optional<Hotel> hotelOpt = hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode());
-            if (hotelOpt.isEmpty()) {
-                return "Hotel no encontrado";
-            }
-            hotelEntity = hotelOpt.get();
+        if (dto == null || dto.getHotel() == null) {
+            throw new InvalidDataException("Los datos de la reserva no pueden ser nulos.");
         }
 
-        // Validar si ya existe una reserva para este hotel en las mismas fechas
+        // Buscar el hotel
+        Hotel hotelEntity = (dto.getHotel().getId() != null) ?
+                hotelRepository.findByIdAndActiveTrue(dto.getHotel().getId())
+                        .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado")) :
+                hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode())
+                        .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+
+        // Verificar si ya existe una reserva en las mismas fechas
         boolean existsBooking = hotelBookingRepository.existsByHotelAndDateFromAndDateToAndActiveTrue(
                 hotelEntity, dto.getHotel().getDateFrom(), dto.getHotel().getDateTo());
         if (existsBooking) {
-            return "Ya existe una reserva activa para este hotel en las mismas fechas.";
+            throw new EntityNotDeletableException("Ya existe una reserva activa para este hotel en las mismas fechas.");
         }
 
-        // Procesar los hosts: buscar por DNI y crear si no existen
+        // Procesar huéspedes y guardar reserva
         List<User> hostEntities = new ArrayList<>();
         for (UserDTORequest hostDTO : dto.getHosts()) {
-            Optional<User> userOpt = userRepository.findByDni(hostDTO.getDni());
-            if (userOpt.isPresent()) {
-                hostEntities.add(userOpt.get());
-            } else {
-                User newUser = User.builder()
-                        .name(hostDTO.getName())
-                        .surname(hostDTO.getSurname())
-                        .phone(hostDTO.getPhone())
-                        .dni(hostDTO.getDni())
-                        // Asegúrate de asignar el username si es obligatorio
-                        .username(hostDTO.getDni()) // o la lógica que corresponda
-                        .build();
-                newUser = userRepository.save(newUser);
-                hostEntities.add(newUser);
-            }
+            User host = userRepository.findByDni(hostDTO.getDni())
+                    .orElseGet(() -> {
+                        User newUser = User.builder()
+                                .name(hostDTO.getName())
+                                .surname(hostDTO.getSurname())
+                                .phone(hostDTO.getPhone())
+                                .dni(hostDTO.getDni())
+                                .username(hostDTO.getDni())
+                                .build();
+                        return userRepository.save(newUser);
+                    });
+            hostEntities.add(host);
         }
 
-        // Mapear el resto de la reserva y asignar el hotel y la lista completa de hosts
+        // Guardar la reserva
         HotelBooking booking = hotelBookingMapper.requestToEntity(dto);
         booking.setHotel(hotelEntity);
-        booking.setHosts(hostEntities);  // Se asigna la lista completa de hosts
-
-        // Guardar la reserva y retornar mensaje
+        booking.setHosts(hostEntities);
         booking = hotelBookingRepository.save(booking);
 
-        // Actualizar el estado del hotel a "SI" en el campo booked
+        // Actualizar estado del hotel
         hotelEntity.setBooked(Booked.SI);
         hotelRepository.save(hotelEntity);
 
         return "Reserva creada correctamente con ID: " + booking.getId();
     }
-
-
-
 
 
 }

@@ -3,6 +3,9 @@ package com.hackaboss.travelagency.controller;
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
 import com.hackaboss.travelagency.service.IFlightService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,11 @@ public class FlightController {
     }
 
     @GetMapping
+    @Operation(summary = "Obtiene el listado de todos los vuelos registrados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelos listados correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se encontraron vuelos")
+    })
     public ResponseEntity<List<FlightDTOResponse>> getAllFlights() {
         try {
             return ResponseEntity.ok(flightService.findAll());
@@ -33,6 +41,11 @@ public class FlightController {
     }
 
     @PostMapping("/new")
+    @Operation(summary = "Crea un nuevo vuelo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Vuelo creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo crear el vuelo")
+    })
     public ResponseEntity<String> createFlight(@Valid @RequestBody FlightDTORequest flightDTORequest) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(flightService.createFlight(flightDTORequest));
@@ -42,6 +55,11 @@ public class FlightController {
     }
 
     @PutMapping("/edit/{id}")
+    @Operation(summary = "Actualiza un vuelo existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelo actualizado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo actualizar el vuelo")
+    })
     public ResponseEntity<String> updateFlight(@PathVariable Long id, @Valid @RequestBody FlightDTORequest flightDTORequest) {
         try {
             return ResponseEntity.ok(flightService.updateFlight(id, flightDTORequest));
@@ -51,6 +69,11 @@ public class FlightController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Elimina un vuelo existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelo eliminado correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se pudo eliminar el vuelo")
+    })
     public ResponseEntity<String> deleteFlight(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(flightService.deleteFlight(id));
@@ -60,16 +83,22 @@ public class FlightController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> findFlightById(@PathVariable Long id) {
+    @Operation(summary = "Obtiene un vuelo por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelo encontrado correctamente"),
+            @ApiResponse(responseCode = "404", description = "No se encontró el vuelo")
+    })
+    public ResponseEntity<FlightDTOResponse> findFlightById(@PathVariable Long id) {
         Optional<FlightDTOResponse> flightOpt = flightService.findById(id);
-        if (flightOpt.isPresent()) {
-            return ResponseEntity.ok(flightOpt.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró vuelo con ID: " + id);
-        }
+        return flightOpt.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
     }
 
     @GetMapping("/available")
+    @Operation(summary = "Obtiene el listado de vuelos disponibles, por origen, destino y rango de fechas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vuelos disponibles listados correctamente"),
+            @ApiResponse(responseCode = "400", description = "No se encontraron vuelos disponibles")
+    })
     public ResponseEntity<List<FlightDTOResponse>> findAvailableFlights(
             @RequestParam("dateFrom") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateFrom,
             @RequestParam("dateTo") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate dateTo,
