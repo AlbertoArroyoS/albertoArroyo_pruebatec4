@@ -112,6 +112,21 @@
 				{
 					"name": "updateHotel",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "hackaboss",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -141,12 +156,12 @@
 					"response": []
 				},
 				{
-					"name": "findById",
+					"name": "findHotelById",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/agency/hotels/19",
+							"raw": "http://localhost:8080/agency/hotels/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -155,7 +170,7 @@
 							"path": [
 								"agency",
 								"hotels",
-								"19"
+								"1"
 							]
 						}
 					},
@@ -164,10 +179,25 @@
 				{
 					"name": "deleteHotel",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "hackaboss",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/agency/hotels/delete/11",
+							"raw": "http://localhost:8080/agency/hotels/delete/12",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -177,7 +207,7 @@
 								"agency",
 								"hotels",
 								"delete",
-								"11"
+								"12"
 							]
 						}
 					},
@@ -329,7 +359,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/agency/flights/13",
+							"raw": "http://localhost:8080/agency/flights/133",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -338,7 +368,7 @@
 							"path": [
 								"agency",
 								"flights",
-								"13"
+								"133"
 							]
 						}
 					},
@@ -347,10 +377,25 @@
 				{
 					"name": "deleteFlight",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "hackaboss",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/agency/flights/delete/11",
+							"raw": "http://localhost:8080/agency/flights/delete/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -360,7 +405,7 @@
 								"agency",
 								"flights",
 								"delete",
-								"11"
+								"1"
 							]
 						}
 					},
