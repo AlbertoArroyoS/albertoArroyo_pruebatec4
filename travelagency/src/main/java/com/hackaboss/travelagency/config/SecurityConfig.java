@@ -22,6 +22,11 @@ public class SecurityConfig {
 
                 // Configura reglas de autorización
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir acceso sin autenticación a Swagger UI y API Docs
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html").permitAll()
                         // PERMITIR TODOS LOS GET en los 4 controladores
                         .requestMatchers(HttpMethod.GET,
                                 "/agency/hotels/**",
