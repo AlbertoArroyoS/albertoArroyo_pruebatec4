@@ -6,7 +6,6 @@ import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotDeletableException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
-import com.hackaboss.travelagency.mapper.HotelMapper;
 import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.repository.HotelRepository;
 import com.hackaboss.travelagency.util.Booked;
@@ -22,18 +21,15 @@ import java.util.Optional;
 public class HotelService implements IHotelService {
 
     private final HotelRepository hotelRepository;
-    private final HotelMapper hotelMapper;
 
-    public HotelService(HotelRepository hotelRepository, HotelMapper hotelMapper) {
+    public HotelService(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
-        this.hotelMapper = hotelMapper;
     }
-
 
     @Override
     public List<HotelDTOResponse> findAll() {
         List<HotelDTOResponse> hotels = hotelRepository.findByActiveTrue().stream()
-                .map(hotelMapper::entityToDTO)
+                .map(this::entityToDTO)
                 .toList();
 
         if (hotels.isEmpty()) {
@@ -42,13 +38,12 @@ public class HotelService implements IHotelService {
         return hotels;
     }
 
-
     @Override
     public String createHotel(HotelDTORequest hotelDTORequest) {
         if (hotelDTORequest == null) {
             throw new InvalidDataException("Datos del hotel no pueden ser nulos. No se pudo crear.");
         }
-        // Comprobar si ya existe un hotel con el mismo hotelCode y name
+
         Optional<Hotel> existingHotel = hotelRepository.findByHotelCodeAndName(
                 hotelDTORequest.getHotelCode(), hotelDTORequest.getName()
         );
@@ -57,7 +52,7 @@ public class HotelService implements IHotelService {
             throw new EntityExistsException("El hotel con código '" + hotelDTORequest.getHotelCode() +
                     "' y nombre '" + hotelDTORequest.getName() + "' ya existe.");
         }
-        Hotel hotel = hotelMapper.requestToEntity(hotelDTORequest);
+        Hotel hotel = requestToEntity(hotelDTORequest);
         hotelRepository.save(hotel);
         return "Hotel creado con éxito";
     }
@@ -68,7 +63,7 @@ public class HotelService implements IHotelService {
             throw new InvalidDataException("El campo ID no puede ser nulo. No se pudo buscar.");
         }
         return hotelRepository.findByIdAndActiveTrue(id)
-                .map(hotelMapper::entityToDTO);
+                .map(this::entityToDTO);
     }
 
     @Override
@@ -85,7 +80,7 @@ public class HotelService implements IHotelService {
         );
 
         return availableHotels.stream()
-                .map(hotelMapper::entityToDTO)
+                .map(this::entityToDTO)
                 .toList();
     }
 
@@ -96,11 +91,7 @@ public class HotelService implements IHotelService {
             throw new InvalidDataException("Datos inválidos para actualizar el hotel. No se pudo actualizar.");
         }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
-                .orElse(null);
-
-        if (hotel == null) {
-            throw new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo actualizar.");
-        }
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo actualizar."));
 
         hotel.setHotelCode(hotelDTORequest.getHotelCode());
         hotel.setName(hotelDTORequest.getName());
@@ -121,11 +112,7 @@ public class HotelService implements IHotelService {
             throw new InvalidDataException("ID del hotel no puede ser nulo. No se pudo eliminar.");
         }
         Hotel hotel = hotelRepository.findByIdAndActiveTrue(id)
-                .orElse(null);
-
-        if (hotel == null) {
-            throw new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo eliminar.");
-        }
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el hotel con ID " + id + ". No se pudo eliminar."));
 
         boolean hasBookings = hotel.getListHotelBookings().stream()
                 .anyMatch(booking -> booking.getHotel().getId().equals(id));
@@ -148,5 +135,32 @@ public class HotelService implements IHotelService {
     @Override
     public Hotel save(Hotel hotel) {
         return hotelRepository.save(hotel);
+    }
+
+    // Métodos de conversión
+    private Hotel requestToEntity(HotelDTORequest request) {
+        return Hotel.builder()
+                .hotelCode(request.getHotelCode())
+                .name(request.getName())
+                .city(request.getCity())
+                .roomType(RoomType.valueOf(request.getRoomType()))
+                .ratePerNight(request.getRatePerNight())
+                .dateFrom(request.getDateFrom())
+                .dateTo(request.getDateTo())
+                .booked(Booked.NO)
+                .build();
+    }
+
+    private HotelDTOResponse entityToDTO(Hotel hotel) {
+        return HotelDTOResponse.builder()
+                .hotelCode(hotel.getHotelCode())
+                .name(hotel.getName())
+                .city(hotel.getCity())
+                .roomType(hotel.getRoomType().toString())
+                .ratePerNight(hotel.getRatePerNight())
+                .dateFrom(hotel.getDateFrom())
+                .dateTo(hotel.getDateTo())
+                .booked(hotel.getBooked().toString())
+                .build();
     }
 }

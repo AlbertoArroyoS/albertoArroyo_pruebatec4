@@ -6,7 +6,6 @@ import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotDeletableException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
-import com.hackaboss.travelagency.mapper.FlightMapper;
 import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import jakarta.transaction.Transactional;
@@ -19,20 +18,16 @@ import java.util.Optional;
 @Service
 public class FlightService implements IFlightService {
 
-
-    private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
 
-    public FlightService(FlightMapper flightMapper, FlightRepository flightRepository) {
-        this.flightMapper = flightMapper;
+    public FlightService(FlightRepository flightRepository) {
         this.flightRepository = flightRepository;
     }
-
 
     @Override
     public List<FlightDTOResponse> findAll() {
         return flightRepository.findByActiveTrue().stream()
-                .map(flightMapper::entityToDTO)
+                .map(this::entityToDTO)
                 .toList();
     }
 
@@ -42,14 +37,11 @@ public class FlightService implements IFlightService {
         if (flightDTORequest == null) {
             throw new InvalidDataException("Datos del vuelo no pueden ser nulos. No se pudo crear.");
         }
-        // Comprobar si ya existe un vuelo con el mismo flightNumber
         Optional<Flight> existingFlight = flightRepository.findByFlightNumber(flightDTORequest.getFlightNumber());
-
         if (existingFlight.isPresent()) {
             throw new EntityExistsException("El vuelo con número '" + flightDTORequest.getFlightNumber() + "' ya existe.");
         }
-
-        Flight flight = flightMapper.requestToEntity(flightDTORequest);
+        Flight flight = requestToEntity(flightDTORequest);
         flightRepository.save(flight);
         return "Vuelo creado con éxito";
     }
@@ -61,11 +53,7 @@ public class FlightService implements IFlightService {
             throw new InvalidDataException("Datos inválidos para actualizar el vuelo. No se pudo actualizar.");
         }
         Flight flight = flightRepository.findByIdAndActiveTrue(id)
-                .orElse(null);
-
-        if (flight == null) {
-            throw new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo actualizar.");
-        }
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo actualizar."));
 
         flight.setFlightNumber(flightDTORequest.getFlightNumber());
         flight.setOrigin(flightDTORequest.getOrigin());
@@ -86,11 +74,7 @@ public class FlightService implements IFlightService {
             throw new InvalidDataException("ID del vuelo no puede ser nulo. No se pudo eliminar.");
         }
         Flight flight = flightRepository.findByIdAndActiveTrue(id)
-                .orElse(null);
-
-        if (flight == null) {
-            throw new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar.");
-        }
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar."));
 
         boolean hasBookings = flight.getListFlightBookings().stream()
                 .anyMatch(booking -> booking.getFlight().getId().equals(id));
@@ -103,14 +87,13 @@ public class FlightService implements IFlightService {
         return "Vuelo eliminado con éxito";
     }
 
-
     @Override
     public Optional<FlightDTOResponse> findById(Long id) {
         if (id == null) {
             throw new InvalidDataException("El campo ID no puede ser nulo. No se pudo buscar.");
         }
         return flightRepository.findByIdAndActiveTrue(id)
-                .map(flightMapper::entityToDTO);
+                .map(this::entityToDTO);
     }
 
     @Override
@@ -118,17 +101,13 @@ public class FlightService implements IFlightService {
         if (origin == null || destination == null || departureDate == null || returnDate == null || departureDate.isAfter(returnDate)) {
             throw new InvalidDataException("Parámetros inválidos: verifique origen, destino y fechas.");
         }
-
         List<Flight> availableFlights = flightRepository.findByOriginAndDestinationAndDepartureDateAndReturnDateAndActiveTrue(
-                origin, destination, departureDate, returnDate
-        );
-
+                origin, destination, departureDate, returnDate);
         if (availableFlights.isEmpty()) {
             throw new EntityNotFoundException("No hay vuelos disponibles.");
         }
-
         return availableFlights.stream()
-                .map(flightMapper::entityToDTO)
+                .map(this::entityToDTO)
                 .toList();
     }
 
@@ -148,5 +127,28 @@ public class FlightService implements IFlightService {
         return flightRepository.save(flight);
     }
 
+    // Métodos de conversión
+    private FlightDTOResponse entityToDTO(Flight flight) {
+        return FlightDTOResponse.builder()
+                .flightNumber(flight.getFlightNumber())
+                .origin(flight.getOrigin())
+                .destination(flight.getDestination())
+                .seatType(flight.getSeatType())
+                .ratePerPerson(flight.getRatePerPerson())
+                .departureDate(flight.getDepartureDate())
+                .returnDate(flight.getReturnDate())
+                .build();
+    }
 
+    private Flight requestToEntity(FlightDTORequest flightDTORequest) {
+        return Flight.builder()
+                .flightNumber(flightDTORequest.getFlightNumber())
+                .origin(flightDTORequest.getOrigin())
+                .destination(flightDTORequest.getDestination())
+                .seatType(flightDTORequest.getSeatType())
+                .ratePerPerson(flightDTORequest.getRatePerPerson())
+                .departureDate(flightDTORequest.getDepartureDate())
+                .returnDate(flightDTORequest.getReturnDate())
+                .build();
+    }
 }

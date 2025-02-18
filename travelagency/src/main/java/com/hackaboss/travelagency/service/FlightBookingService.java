@@ -3,8 +3,9 @@ package com.hackaboss.travelagency.service;
 import com.hackaboss.travelagency.dto.request.FlightBookingRequestDTO;
 import com.hackaboss.travelagency.dto.request.UserDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightBookingResponseDTO;
+import com.hackaboss.travelagency.dto.response.UserDTOResponse;
 import com.hackaboss.travelagency.exception.EntityNotDeletableException;
-import com.hackaboss.travelagency.mapper.FlightBookingMapper;
+import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.model.Flight;
 import com.hackaboss.travelagency.model.FlightBooking;
 import com.hackaboss.travelagency.model.User;
@@ -20,13 +21,11 @@ public class FlightBookingService implements IFlightBookingService {
     private final IFlightService flightService;
     private final IUserService userService;
     private final FlightBookingRepository flightBookingRepository;
-    private final FlightBookingMapper flightBookingMapper;
 
-    public FlightBookingService(IFlightService flightService, IUserService userService, FlightBookingRepository flightBookingRepository, FlightBookingMapper flightBookingMapper) {
+    public FlightBookingService(IFlightService flightService, IUserService userService, FlightBookingRepository flightBookingRepository) {
         this.flightService = flightService;
         this.userService = userService;
         this.flightBookingRepository = flightBookingRepository;
-        this.flightBookingMapper = flightBookingMapper;
     }
 
     @Override
@@ -37,6 +36,9 @@ public class FlightBookingService implements IFlightBookingService {
         // Procesar los pasajeros
         List<User> passengers = new ArrayList<>();
         for (UserDTORequest hostDTO : request.getPassengers()) {
+            if (hostDTO.getDni() == null || hostDTO.getDni().isBlank()) {
+                throw new InvalidDataException("DNI del pasajero no puede ser nulo o vacío");
+            }
             User host = userService.findOrCreateUserByDni(hostDTO);
             passengers.add(host);
         }
@@ -48,7 +50,7 @@ public class FlightBookingService implements IFlightBookingService {
         }
 
         // Crear la reserva
-        FlightBooking booking = flightBookingMapper.requestToEntity(request);
+        FlightBooking booking = requestToEntity(request);
         booking.setFlight(flight);
         booking.setPassengers(passengers);
         booking = flightBookingRepository.save(booking);
@@ -59,15 +61,43 @@ public class FlightBookingService implements IFlightBookingService {
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
     }
 
-
-
     @Override
     public List<FlightBookingResponseDTO> findAll() {
         List<FlightBooking> activeBookings = flightBookingRepository.findByActiveTrue();
         return activeBookings.stream()
-                .map(flightBookingMapper::entityToDTO)
+                .map(this::entityToDTO)
                 .toList();
     }
 
+    // Métodos de conversión
+    private FlightBooking requestToEntity(FlightBookingRequestDTO request) {
+        return FlightBooking.builder()
+                .flight(flightService.findActiveFlight(request.getFlight()))
+                .passengers(request.getPassengers().stream()
+                        .filter(dto -> dto.getDni() != null && !dto.getDni().isBlank())
+                        .map(userService::findOrCreateUserByDni)
+                        .toList())
+                .build();
+    }
 
+    private FlightBookingResponseDTO entityToDTO(FlightBooking booking) {
+        return FlightBookingResponseDTO.builder()
+                .flightNumber(booking.getFlight().getFlightNumber())
+                .origin(booking.getFlight().getOrigin())
+                .destination(booking.getFlight().getDestination())
+                .departureDate(booking.getFlight().getDepartureDate())
+                .numberOfPassengers(booking.getPassengers().size())
+                .totalAmount(booking.getFlight().getRatePerPerson() * booking.getPassengers().size())
+                .passengers(booking.getPassengers().stream().map(this::userToDTO).toList())
+                .build();
+    }
+
+    private UserDTOResponse userToDTO(User user) {
+        return UserDTOResponse.builder()
+                .name(user.getName())
+                .surname(user.getSurname())
+                .phone(user.getPhone())
+                .dni(user.getDni())
+                .build();
+    }
 }
