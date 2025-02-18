@@ -90,6 +90,7 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
       "dni": "23456789C"
     }
   ]
+  }
 
   ```
 - **CRUD de hoteles** (Requiere autenticación)
@@ -125,7 +126,8 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
       "phone": "987654321"
     }
   ]
-}
+  }
+
   ```
 - **CRUD de vuelos** (Requiere autenticación)
   - `POST /agency/flights/new`
