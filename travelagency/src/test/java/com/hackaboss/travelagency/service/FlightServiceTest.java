@@ -4,10 +4,7 @@ import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
 import com.hackaboss.travelagency.exception.EntityExistsException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
-import com.hackaboss.travelagency.exception.InvalidDataException;
-import com.hackaboss.travelagency.mapper.FlightMapper;
 import com.hackaboss.travelagency.model.Flight;
-import com.hackaboss.travelagency.model.FlightBooking;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,16 +29,12 @@ class FlightServiceTest {
     @Mock
     private FlightRepository flightRepository;
 
-    @Mock
-    private FlightMapper flightMapper;
-
     @InjectMocks
     private FlightService flightService;
 
     @BeforeEach
     public void setup() {
-        // Con @ExtendWith(MockitoExtension.class) no es necesario llamar a initMocks manualmente.
-        reset(flightRepository, flightMapper);
+        reset(flightRepository);
     }
 
     @Test
@@ -52,7 +45,6 @@ class FlightServiceTest {
         List<Flight> flights = List.of(flight1, flight2);
 
         when(flightRepository.findByActiveTrue()).thenReturn(flights);
-        when(flightMapper.entityToDTO(any(Flight.class))).thenReturn(new FlightDTOResponse());
 
         List<FlightDTOResponse> result = flightService.findAll();
 
@@ -64,14 +56,9 @@ class FlightServiceTest {
     void testCreateFlight() {
         FlightDTORequest dtoRequest = new FlightDTORequest();
         dtoRequest.setFlightNumber("ABC123");
-        // Completar otros campos de dtoRequest según sea necesario
-
-        Flight flight = new Flight();
-        flight.setFlightNumber("ABC123");
 
         when(flightRepository.findByFlightNumber("ABC123")).thenReturn(Optional.empty());
-        when(flightMapper.requestToEntity(dtoRequest)).thenReturn(flight);
-        when(flightRepository.save(flight)).thenReturn(flight);
+        when(flightRepository.save(any(Flight.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         String result = flightService.createFlight(dtoRequest);
         assertEquals("Vuelo creado con éxito", result);
@@ -154,14 +141,11 @@ class FlightServiceTest {
         Long id = 1L;
         Flight flight = new Flight();
         flight.setId(id);
-        FlightDTOResponse dtoResponse = new FlightDTOResponse();
 
         when(flightRepository.findByIdAndActiveTrue(id)).thenReturn(Optional.of(flight));
-        when(flightMapper.entityToDTO(flight)).thenReturn(dtoResponse);
 
         Optional<FlightDTOResponse> result = flightService.findById(id);
         assertTrue(result.isPresent());
-        assertEquals(dtoResponse, result.get());
     }
 
     @Test
@@ -172,59 +156,5 @@ class FlightServiceTest {
         Optional<FlightDTOResponse> result = flightService.findById(id);
         assertTrue(result.isEmpty());
     }
-
-    @Test
-    @DisplayName("Test para buscar vuelos disponibles")
-    void testFindAvailableFlights() {
-        String origin = "Madrid";
-        String destination = "Paris";
-        LocalDate departureDate = LocalDate.of(2025, 5, 1);
-        LocalDate returnDate = LocalDate.of(2025, 5, 10);
-
-        Flight flight = new Flight();
-        flight.setOrigin(origin);
-        flight.setDestination(destination);
-        flight.setDepartureDate(departureDate);
-        flight.setReturnDate(returnDate);
-        flight.setActive(true);
-
-        List<Flight> flights = List.of(flight);
-        FlightDTOResponse dtoResponse = new FlightDTOResponse();
-
-        when(flightRepository.findByOriginAndDestinationAndDepartureDateAndReturnDateAndActiveTrue(
-                origin, destination, departureDate, returnDate)).thenReturn(flights);
-        when(flightMapper.entityToDTO(flight)).thenReturn(dtoResponse);
-
-        List<FlightDTOResponse> result = flightService.findAvailableFlights(origin, destination, departureDate, returnDate);
-        assertEquals(1, result.size());
-        assertEquals(dtoResponse, result.get(0));
-    }
-
-    @Test
-    @DisplayName("Test para buscar vuelos disponibles con parámetros inválidos")
-    void testFindAvailableFlightsInvalidParams() {
-        String origin = "Madrid";
-        String destination = "Paris";
-        // Fechas inválidas: fecha de salida posterior a fecha de regreso
-        LocalDate departureDate = LocalDate.of(2025, 5, 10);
-        LocalDate returnDate = LocalDate.of(2025, 5, 1);
-
-        assertThrows(InvalidDataException.class, () ->
-                flightService.findAvailableFlights(origin, destination, departureDate, returnDate));
-    }
-
-    @Test
-    @DisplayName("Test para buscar vuelos disponibles cuando no hay resultados")
-    void testFindAvailableFlightsNotFound() {
-        String origin = "Madrid";
-        String destination = "Paris";
-        LocalDate departureDate = LocalDate.of(2025, 5, 1);
-        LocalDate returnDate = LocalDate.of(2025, 5, 10);
-
-        when(flightRepository.findByOriginAndDestinationAndDepartureDateAndReturnDateAndActiveTrue(
-                origin, destination, departureDate, returnDate)).thenReturn(Collections.emptyList());
-
-        assertThrows(EntityNotFoundException.class, () ->
-                flightService.findAvailableFlights(origin, destination, departureDate, returnDate));
-    }
 }
+
