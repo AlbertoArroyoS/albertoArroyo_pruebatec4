@@ -31,7 +31,7 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 - **Swagger** (Documentación de API)
 - **MySQL** (Base de datos)
 - **Git & GitHub** (Control de versiones)
-- **SonarQube.**
+- **SonarQube**
 
 ---
 
