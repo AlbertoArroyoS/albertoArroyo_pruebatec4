@@ -5,6 +5,10 @@
 
 # Agencia de Turismo - API REST
 
+## Wiki de la aplicación
+
+https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4/wiki
+
 ## Descripción
 
 Esta API REST permite la gestión de reservas de hoteles y vuelos para una agencia de turismo. La aplicación proporciona funcionalidades para buscar y reservar hoteles y vuelos, así como gestionar la información de estos servicios. Se han aplicado buenas prácticas en el desarrollo utilizando tecnologías modernas.
