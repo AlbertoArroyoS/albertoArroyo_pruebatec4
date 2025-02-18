@@ -26,7 +26,7 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 3. **Configurar base de datos MySQL**
 4. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/tuUsuario/tuRepositorio.git
+   git clone https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4.git
    ```
 5. **Configurar las credenciales de la base de datos en `application.properties`**:
    ```properties
