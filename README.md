@@ -44,8 +44,12 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
    ```bash
    java -jar travelagency-0.0.1-SNAPSHOT.jar
    ```
+
+   Se carga la aplicación Spring Boot
    
-   ![image](https://github.com/user-attachments/assets/2f6f373b-fe57-4d89-a235-f0fef945849e)
+   ![image](https://github.com/user-attachments/assets/046afec9-e946-45bd-a275-004df3c67419)
+
+   Para cerrar la aplicación Control+c
 
 6. **Acceder a la API** en:
    ```
