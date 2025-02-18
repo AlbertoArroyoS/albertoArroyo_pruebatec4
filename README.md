@@ -41,9 +41,10 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 
    Ejercutar el comando para cargar la aplicación
    
-   ```properties
+   ```bash
    java -jar travelagency-0.0.1-SNAPSHOT.jar
    ```
+   
    ![image](https://github.com/user-attachments/assets/2f6f373b-fe57-4d89-a235-f0fef945849e)
 
 6. **Acceder a la API** en:
