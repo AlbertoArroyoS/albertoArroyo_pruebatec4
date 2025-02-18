@@ -13,6 +13,14 @@ https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4/wiki
 
 Esta API REST permite la gestión de reservas de hoteles y vuelos para una agencia de turismo. La aplicación proporciona funcionalidades para buscar y reservar hoteles y vuelos, así como gestionar la información de estos servicios. Se han aplicado buenas prácticas en el desarrollo utilizando tecnologías modernas.
 
+## Carpetas del repositorio
+
+- /database/ -> Script SQL con la base de datos utilizada
+- /jar/ -> Ejecutable de la aplicación en .jar
+- /postman/ -> Colección para PostMan con todas las consultas realizadas
+- /travelagency/ -> Código de la aplicación 
+
+
 ## Tecnologías Utilizadas
 
 - **Java 17**
