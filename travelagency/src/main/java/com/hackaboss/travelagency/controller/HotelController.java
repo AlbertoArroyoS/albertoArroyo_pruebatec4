@@ -32,16 +32,13 @@ public class HotelController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Hoteles listados correctamente"),
             @ApiResponse(responseCode = "404", description = "No se encontraron hoteles"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<List<HotelDTOResponse>> getAllHotels() {
-        try {
-            return ResponseEntity.ok(hotelService.findAll());
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        List<HotelDTOResponse> hotels = hotelService.findAll();
+        if (hotels.isEmpty()) {
+            throw new EntityNotFoundException("No se encontraron hoteles");
         }
+        return ResponseEntity.ok(hotels);
     }
 
     @PostMapping("/new")
