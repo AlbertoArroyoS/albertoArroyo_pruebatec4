@@ -7,7 +7,6 @@ import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.mapper.FlightMapper;
 import com.hackaboss.travelagency.model.Flight;
-import com.hackaboss.travelagency.repository.FlightBookingRepository;
 import com.hackaboss.travelagency.repository.FlightRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -21,12 +20,10 @@ public class FlightService implements IFlightService {
 
     private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
-    //private final FlightBookingRepository flightBookingRepository;
 
     public FlightService(FlightMapper flightMapper, FlightRepository flightRepository) {
         this.flightMapper = flightMapper;
         this.flightRepository = flightRepository;
-        //this.flightBookingRepository = flightBookingRepository;
     }
 
 
@@ -93,8 +90,6 @@ public class FlightService implements IFlightService {
             throw new EntityNotFoundException("No se encontró el vuelo con ID " + id + ". No se pudo eliminar.");
         }
 
-        // Verificar si el vuelo tiene reservas activas
-        //boolean hasBookings = flightBookingRepository.existsByFlightAndActiveTrue(flight);
         boolean hasBookings = flight.getListFlightBookings().stream()
                 .anyMatch(booking -> booking.getFlight().getId().equals(id));
         if (hasBookings) {

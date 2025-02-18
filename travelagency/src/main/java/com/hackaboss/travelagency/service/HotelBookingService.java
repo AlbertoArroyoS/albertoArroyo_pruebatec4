@@ -11,8 +11,6 @@ import com.hackaboss.travelagency.model.Hotel;
 import com.hackaboss.travelagency.model.HotelBooking;
 import com.hackaboss.travelagency.model.User;
 import com.hackaboss.travelagency.repository.HotelBookingRepository;
-import com.hackaboss.travelagency.repository.HotelRepository;
-import com.hackaboss.travelagency.repository.UserRepository;
 import com.hackaboss.travelagency.util.Booked;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -86,6 +84,5 @@ public class HotelBookingService implements IHotelBookingService {
 
         return "Reserva creada correctamente con ID: " + booking.getId();
     }
-
 
 }
