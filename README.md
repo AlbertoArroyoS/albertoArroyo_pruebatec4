@@ -35,25 +35,31 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
    ```bash
    git clone https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4.git
    ```
-5. **Configurar las credenciales de la base de datos en `application.properties`**:
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/travel_agency?useSSL=false&serverTimezone=UTC
-   spring.datasource.username=root
-   spring.datasource.password=
-   ```
-6. **Ejecutar la aplicación**:
+5. **En la carpeta /jar/**:
+   
+   ![image](https://github.com/user-attachments/assets/e2f588b3-ca75-444e-adc1-a07a1bd62d0c)
+
+   Ejercutar el comando para cargar la aplicación
+   
    ```bash
-   mvn spring-boot:run
+   java -jar travelagency-0.0.1-SNAPSHOT.jar
    ```
-7. **Acceder a la API** en:
+
+   Se carga la aplicación Spring Boot
+   
+   ![image](https://github.com/user-attachments/assets/046afec9-e946-45bd-a275-004df3c67419)
+
+   Para cerrar la aplicación Control+c
+
+6. **Acceder a la API** en:
    ```
    http://localhost:8080
    ```
-8. **Acceder a la documentación Swagger**:
+7. **Acceder a la documentación Swagger**:
    ```
    http://localhost:8080/swagger-ui.html
    ```
-9. **Usuario de prueba para los endpoint que requieren autenticación **:
+8. **Usuario de prueba para los endpoint que requieren autenticación **:
    ```
    user.name=hackaboss
    user.password=1234
@@ -62,6 +68,8 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 ---
 
 ## Endpoints Disponibles
+
+** En el Wiki están todos los Endpoints explicados punto por punto
 
 ### Hoteles
 
@@ -166,18 +174,5 @@ Para acceder a los endpoints protegidos, se requiere autenticación mediante **S
 ## Testing
 
 Se han implementado pruebas unitarias con JUnit y Mockito.
-
-
-## Entrega y Recursos
-
-- **Repositorio GitHub:** [Enlace al repositorio](https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4.git)
-- **Base de datos .sql**: Incluido en `/resources/db/initial-data.sql`
-- **Colección de Postman**: Disponible en el repositorio.
-
----
-
-## Consideraciones Finales
-
-Esta API está diseñada para facilitar la gestión de reservas en la agencia de turismo, permitiendo consultas rápidas y reservas eficientes de hoteles y vuelos. Se han aplicado mejores prácticas de desarrollo y seguridad.
 
 
