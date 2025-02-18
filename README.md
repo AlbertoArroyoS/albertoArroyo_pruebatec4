@@ -175,4 +175,9 @@ Para acceder a los endpoints protegidos, se requiere autenticación mediante **S
 
 Se han implementado pruebas unitarias con JUnit y Mockito.
 
+## Arquitectura de capas
+
+![image](https://github.com/user-attachments/assets/9d436ce3-9cf7-4c82-a99d-a601d5ae421f)
+
+
 
