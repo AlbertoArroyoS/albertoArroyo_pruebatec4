@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-02-2025 a las 13:11:31
+-- Tiempo de generación: 18-02-2025 a las 19:41:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -55,7 +55,7 @@ INSERT INTO `flights` (`id`, `active`, `departure_date`, `destination`, `flight_
 (9, b'1', '2024-02-15', 'Iguazú', 'BOIG-6567', 'Bogotá', 570, '2024-02-28', 'Business'),
 (10, b'1', '2024-03-01', 'Buenos Aires', 'BOBA-6567', 'Bogotá', 398, '2024-03-14', 'Economy'),
 (11, b'1', '2024-02-10', 'Madrid', 'BOMA-4442', 'Bogotá', 1100, '2024-02-24', 'Economy'),
-(12, b'0', '2024-04-17', 'Miami', 'MEMI-9986', 'Medellín', 1164, '2024-05-02', 'Business'),
+(12, b'1', '2024-04-17', 'Miami', 'MEMI-9986', 'Medellín', 1164, '2024-05-02', 'Business'),
 (13, b'1', '2024-02-10', 'Miami', 'BAMI-9999', 'Ciudad Real', 950, '2024-02-15', 'Economy');
 
 -- --------------------------------------------------------
@@ -75,7 +75,10 @@ CREATE TABLE `flight_bookings` (
 --
 
 INSERT INTO `flight_bookings` (`id`, `active`, `flight_id`) VALUES
-(1, b'1', 1);
+(1, b'1', 1),
+(2, b'1', 3),
+(3, b'1', 5),
+(4, b'1', 12);
 
 -- --------------------------------------------------------
 
@@ -94,7 +97,12 @@ CREATE TABLE `flight_booking_users` (
 
 INSERT INTO `flight_booking_users` (`flight_booking_id`, `user_id`) VALUES
 (1, 1),
-(1, 2);
+(1, 2),
+(2, 4),
+(3, 7),
+(3, 6),
+(4, 1),
+(4, 2);
 
 -- --------------------------------------------------------
 
@@ -120,10 +128,10 @@ CREATE TABLE `hotels` (
 --
 
 INSERT INTO `hotels` (`id`, `active`, `booked`, `city`, `date_from`, `date_to`, `hotel_code`, `name`, `rate_per_night`, `room_type`) VALUES
-(1, b'1', 'NO', 'Miami', '2024-02-10', '2024-03-23', 'AR-0003', 'Atlantis Resort 2', 820, 'TRIPLE'),
-(2, b'1', 'NO', 'Buenos Aires', '2024-02-10', '2024-03-19', 'RC-0001', 'Ritz-Carlton', 543, 'INDIVIDUAL'),
+(1, b'1', 'SI', 'Miami', '2024-02-10', '2024-03-23', 'AR-0003', 'Atlantis Resort 2', 820, 'TRIPLE'),
+(2, b'1', 'SI', 'Buenos Aires', '2024-02-10', '2024-03-19', 'RC-0001', 'Ritz-Carlton', 543, 'INDIVIDUAL'),
 (3, b'1', 'NO', 'Medellín', '2024-02-12', '2024-04-17', 'RC-0002', 'Ritz-Carlton 2', 720, 'DOBLE'),
-(4, b'1', 'NO', 'Madrid', '2024-04-17', '2024-05-23', 'GH-0002', 'Grand Hyatt', 579, 'DOBLE'),
+(4, b'1', 'SI', 'Madrid', '2024-04-17', '2024-05-23', 'GH-0002', 'Grand Hyatt', 579, 'DOBLE'),
 (5, b'1', 'NO', 'Buenos Aires', '2024-01-02', '2024-02-19', 'GH-0001', 'Grand Hyatt 2', 415, 'INDIVIDUAL'),
 (6, b'1', 'NO', 'Barcelona', '2024-01-23', '2024-11-23', 'HL-0001', 'Hilton', 390, 'INDIVIDUAL'),
 (7, b'1', 'NO', 'Barcelona', '2024-01-23', '2024-10-15', 'HL-0002', 'Hilton 2', 584, 'DOBLE'),
@@ -150,7 +158,10 @@ CREATE TABLE `hotel_bookings` (
 --
 
 INSERT INTO `hotel_bookings` (`id`, `active`, `hotel_id`) VALUES
-(1, b'1', 12);
+(1, b'1', 12),
+(2, b'1', 1),
+(3, b'1', 2),
+(4, b'1', 4);
 
 -- --------------------------------------------------------
 
@@ -170,7 +181,13 @@ CREATE TABLE `hotel_booking_users` (
 INSERT INTO `hotel_booking_users` (`hotel_booking_id`, `user_id`) VALUES
 (1, 5),
 (1, 6),
-(1, 7);
+(1, 7),
+(2, 5),
+(2, 6),
+(2, 7),
+(3, 4),
+(4, 7),
+(4, 6);
 
 -- --------------------------------------------------------
 
@@ -198,7 +215,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `active`, `dni`, `email`, `name`, `password`, `phone`, `role`, `surname`, `username`) VALUES
 (1, b'1', '12345678A', 'user1@example.com', 'John', 'hashed_password1', '123456789', 'USER', 'Doe', 'johndoe'),
 (2, b'1', '87654321B', 'user2@example.com', 'Alice', 'hashed_password2', '987654321', 'USER', 'Smith', 'alicesmith'),
-(3, b'0', '11223344C', 'user3@example.com', 'Bob', 'hashed_password3', '654987321', 'USER', 'Brown', 'bobbrown'),
+(3, b'1', '11223344C', 'user3@example.com', 'Bob', 'hashed_password3', '654987321', 'USER', 'Brown', 'bobbrown'),
 (4, b'1', '55667788D', 'user4@example.com', 'Eva', 'hashed_password4', '789456123', 'USER', 'White', 'evawhite'),
 (5, b'1', '12345678B', 'alberto@example.com', 'Alberto', 'hashed_password5', '123456789', 'USER', 'Arroyo', '12345678B'),
 (6, b'1', '87654321Z', 'ana@example.com', 'Ana', 'hashed_password6', '987654321', 'USER', 'Pérez', '87654321Z'),
@@ -268,7 +285,7 @@ ALTER TABLE `flights`
 -- AUTO_INCREMENT de la tabla `flight_bookings`
 --
 ALTER TABLE `flight_bookings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `hotels`
@@ -280,7 +297,7 @@ ALTER TABLE `hotels`
 -- AUTO_INCREMENT de la tabla `hotel_bookings`
 --
 ALTER TABLE `hotel_bookings`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `users`

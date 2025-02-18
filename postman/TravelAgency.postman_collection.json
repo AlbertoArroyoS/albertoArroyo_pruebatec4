@@ -325,6 +325,21 @@
 				{
 					"name": "updateFlight",
 					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "hackaboss",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "1234",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
@@ -337,7 +352,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/agency/flights/edit/13",
+							"raw": "http://localhost:8080/agency/flights/edit/133",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -347,7 +362,7 @@
 								"agency",
 								"flights",
 								"edit",
-								"13"
+								"133"
 							]
 						}
 					},

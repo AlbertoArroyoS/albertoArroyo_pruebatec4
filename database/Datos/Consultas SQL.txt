@@ -126,29 +126,102 @@ VALUES
     }
   ]
 }
-//otra reserva
-{
-  "hotel": {
-    "hotelCode": "HTL-54321",
-    "name": "Hotel Sunrise",
-    "city": "Barcelona",
-    "roomType": "SUITE",
-    "ratePerNight": 200,
-    "dateFrom": "2024-07-01",
-    "dateTo": "2024-07-20"
+//************
+
+  {
+    "hotel": {
+      "hotelCode": "AR-0003",
+      "name": "Atlantis Resort 2",
+      "city": "Miami",
+      "roomType": "TRIPLE",
+      "ratePerNight": 820,
+      "dateFrom": "2024-02-10",
+      "dateTo": "2024-03-23"
+    },
+    "hosts": [
+      {
+        "name": "John",
+        "surname": "Doe",
+        "phone": "123456789",
+        "dni": "12345678A"
+      },
+      {
+        "name": "Alice",
+        "surname": "Smith",
+        "phone": "987654321",
+        "dni": "87654321B"
+      }
+    ]
   },
-  "hosts": [
+  //**********************
+  {
+    "hotel": {
+      "hotelCode": "RC-0001",
+      "name": "Ritz-Carlton",
+      "city": "Buenos Aires",
+      "roomType": "INDIVIDUAL",
+      "ratePerNight": 543,
+      "dateFrom": "2024-02-10",
+      "dateTo": "2024-03-19"
+    },
+    "hosts": [
+      {
+        "name": "Eva",
+        "surname": "White",
+        "phone": "789456123",
+        "dni": "55667788D"
+      }
+    ]
+  },
+
+  //****
+  {
+    "hotel": {
+      "hotelCode": "GH-0002",
+      "name": "Grand Hyatt",
+      "city": "Madrid",
+      "roomType": "DOBLE",
+      "ratePerNight": 579,
+      "dateFrom": "2024-04-17",
+      "dateTo": "2024-05-23"
+    },
+    "hosts": [
+      {
+        "name": "Luis",
+        "surname": "Martinez",
+        "phone": "555666777",
+        "dni": "23456789C"
+      },
+      {
+        "name": "Ana",
+        "surname": "Pérez",
+        "phone": "987654321",
+        "dni": "87654321Z"
+      }
+    ]
+  }
+
+  //******Reservas de Vuelos
+
+  {
+  "flight": {
+    "flightNumber": "BAMI-1235"
+  },
+  "passengers": [
     {
-      "name": "Carlos",
-      "surname": "Fernández",
-      "phone": "654321987",
-      "dni": "11223344X"
+      "dni": "12345678A",
+      "name": "John",
+      "surname": "Doe",
+      "phone": "123456789"
     },
     {
-      "name": "María",
-      "surname": "López",
-      "phone": "777888999",
-      "dni": "55667788Y"
+      "dni": "87654321B",
+      "name": "Alice",
+      "surname": "Smith",
+      "phone": "987654321"
     }
   ]
 }
+
+//
+
