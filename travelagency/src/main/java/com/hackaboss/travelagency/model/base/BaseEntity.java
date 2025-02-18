@@ -14,6 +14,7 @@ import org.hibernate.type.descriptor.java.BooleanJavaType;
 @FilterDef(name = "activeFilter", parameters = @ParamDef(name = "active", type = BooleanJavaType.class))
 public abstract class BaseEntity {
 
+
     @Column(name = "active")
     protected Boolean active = true;
 

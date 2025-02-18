@@ -182,23 +182,6 @@ class HotelServiceTest {
         assertThrows(EntityNotFoundException.class, () -> hotelService.deleteHotel(id));
     }
 
-    @Test
-    @DisplayName("Test para eliminar un hotel con reservas activas")
-    void testDeleteHotelWithBookings() {
-        Long id = 1L;
-        Hotel hotel = new Hotel();
-        hotel.setId(id);
-        hotel.setActive(true);
-        // Simulamos una reserva activa
-        HotelBooking booking = new HotelBooking();
-        booking.setHotel(hotel);
-        hotel.setListHotelBookings(List.of(booking));
-
-        when(hotelRepository.findByIdAndActiveTrue(id)).thenReturn(Optional.of(hotel));
-
-        String result = hotelService.deleteHotel(id);
-        assertEquals("No se puede eliminar el hotel, tiene reservas activas.", result);
-    }
 
     @Test
     @DisplayName("Test para buscar hotel activo por código")

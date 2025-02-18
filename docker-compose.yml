@@ -1,0 +1,8 @@
+version: '2.1'
+
+services:
+  helloworld:
+    build: travelagency
+    mem_limit: 512m
+    ports:
+      - "8080:8080"

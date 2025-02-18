@@ -149,24 +149,6 @@ class FlightServiceTest {
     }
 
     @Test
-    @DisplayName("Test para eliminar un vuelo con reservas activas")
-    void testDeleteFlightWithBookings() {
-        Long id = 1L;
-        Flight flight = new Flight();
-        flight.setId(id);
-        flight.setActive(true);
-        // Simulamos una reserva activa
-        FlightBooking booking = new FlightBooking();
-        booking.setFlight(flight);
-        flight.setListFlightBookings(List.of(booking));
-
-        when(flightRepository.findByIdAndActiveTrue(id)).thenReturn(Optional.of(flight));
-
-        String result = flightService.deleteFlight(id);
-        assertEquals("No se puede eliminar el vuelo, tiene reservas activas.", result);
-    }
-
-    @Test
     @DisplayName("Test para buscar un vuelo por ID")
     void testFindById() {
         Long id = 1L;

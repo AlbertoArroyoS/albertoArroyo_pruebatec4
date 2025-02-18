@@ -19,6 +19,7 @@ import java.util.Optional;
 @Service
 public class FlightService implements IFlightService {
 
+
     private final FlightMapper flightMapper;
     private final FlightRepository flightRepository;
 
