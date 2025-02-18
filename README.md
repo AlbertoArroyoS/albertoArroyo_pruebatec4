@@ -46,6 +46,11 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
    ```
    http://localhost:8080/swagger-ui.html
    ```
+9. **Usuario de prueba para los endpoint que requieren autenticación **:
+   ```
+   user.name=hackaboss
+   user.password=1234
+   ```
 
 ---
 
