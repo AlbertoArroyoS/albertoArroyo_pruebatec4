@@ -35,12 +35,13 @@ public class FlightController {
             @ApiResponse(responseCode = "400", description = "No se encontraron vuelos")
     })
     public ResponseEntity<List<FlightDTOResponse>> getAllFlights() {
-        try {
-            return ResponseEntity.ok(flightService.findAll());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        List<FlightDTOResponse> flights = flightService.findAll();
+        if (flights.isEmpty()) {
+            throw new EntityNotFoundException("No se encontraron vuelos");
         }
+        return ResponseEntity.ok(flights);
     }
+
 
     @PostMapping("/new")
     @Operation(summary = "Crea un nuevo vuelo")
@@ -115,11 +116,12 @@ public class FlightController {
         try {
             List<FlightDTOResponse> flights = flightService.findAvailableFlights(origin, destination, dateFrom, dateTo);
             return ResponseEntity.ok(flights);
+
         } catch (InvalidDataException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // 400 BAD REQUEST si los parámetros son inválidos
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 NOT FOUND si no hay vuelos disponibles
         }
+
     }
+
 
 }

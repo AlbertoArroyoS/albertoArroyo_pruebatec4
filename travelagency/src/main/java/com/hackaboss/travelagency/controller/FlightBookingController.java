@@ -46,8 +46,6 @@ public class FlightBookingController {
         }
     }
 
-
-
     @GetMapping
     @Operation(summary = "Obtiene el listado de todas las reservas de vuelo")
     @ApiResponses(value = {
@@ -56,6 +54,10 @@ public class FlightBookingController {
     })
     public ResponseEntity<List<FlightBookingResponseDTO>> getAllFlightBookings() {
         List<FlightBookingResponseDTO> activeBookings = flightBookingService.findAll();
+        if (activeBookings.isEmpty()) {
+            throw new EntityNotFoundException("No se encontraron reservas de vuelo");
+        }
         return ResponseEntity.ok(activeBookings);
     }
+
 }

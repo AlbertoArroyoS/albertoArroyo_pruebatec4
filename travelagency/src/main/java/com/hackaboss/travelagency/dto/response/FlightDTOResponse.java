@@ -1,11 +1,13 @@
 package com.hackaboss.travelagency.dto.response;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
-@Data
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FlightDTOResponse {
 
     private String flightNumber;
