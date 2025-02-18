@@ -26,39 +26,29 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html").permitAll()
-                        // PERMITIR TODOS LOS GET en los 4 controladores
-                        .requestMatchers(HttpMethod.GET,
-                                "/agency/hotels/**",
-                                "/agency/flights/**",
-                                "/agency/flight-booking/**",
-                                "/agency/room-booking/**").permitAll()
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**").permitAll()
 
-                        // SOLO EMPLEADOS AUTENTICADOS PUEDEN HACER POST, PUT Y DELETE en los 4 controladores
-                        .requestMatchers(HttpMethod.POST,
-                                "/agency/hotels/new",
-                                "/agency/flights/new",
-                                "/agency/flight-booking/new",
-                                "/agency/room-booking/new").authenticated()
+                        // Permitir todos los GET sin autenticación
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
 
-                        .requestMatchers(HttpMethod.PUT,
-                                "/agency/hotels/edit/**",
-                                "/agency/flights/edit/**").authenticated()
+                        // Requerir autenticación para POST, PUT y DELETE
+                        .requestMatchers(HttpMethod.POST, "/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/**").authenticated()
 
-                        .requestMatchers(HttpMethod.DELETE,
-                                "/agency/hotels/delete/**",
-                                "/agency/flights/delete/**").authenticated()
-
-                        // OTRAS SOLICITUDES REQUIEREN AUTENTICACIÓN
+                        // Cualquier otra solicitud requiere autenticación
                         .anyRequest().authenticated()
                 )
 
-                // Habilita autenticación básica (para pruebas; en producción, usa JWT)
+                // Habilita autenticación básica
                 .httpBasic(Customizer.withDefaults())
 
                 // Construye la cadena de seguridad
                 .build();
     }
+
 
 
 }
