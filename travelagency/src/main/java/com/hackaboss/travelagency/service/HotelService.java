@@ -3,6 +3,7 @@ package com.hackaboss.travelagency.service;
 import com.hackaboss.travelagency.dto.request.HotelDTORequest;
 import com.hackaboss.travelagency.dto.response.HotelDTOResponse;
 import com.hackaboss.travelagency.exception.EntityExistsException;
+import com.hackaboss.travelagency.exception.EntityNotDeletableException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.mapper.HotelMapper;
@@ -130,7 +131,7 @@ public class HotelService implements IHotelService {
                 .anyMatch(booking -> booking.getHotel().getId().equals(id));
 
         if (hasBookings) {
-            return "No se puede eliminar el hotel, tiene reservas activas.";
+            throw new EntityNotDeletableException("No se puede eliminar el hotel, tiene reservas activas.");
         }
 
         hotel.setActive(false);

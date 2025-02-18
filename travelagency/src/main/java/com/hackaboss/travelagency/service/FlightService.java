@@ -3,6 +3,7 @@ package com.hackaboss.travelagency.service;
 import com.hackaboss.travelagency.dto.request.FlightDTORequest;
 import com.hackaboss.travelagency.dto.response.FlightDTOResponse;
 import com.hackaboss.travelagency.exception.EntityExistsException;
+import com.hackaboss.travelagency.exception.EntityNotDeletableException;
 import com.hackaboss.travelagency.exception.InvalidDataException;
 import com.hackaboss.travelagency.exception.EntityNotFoundException;
 import com.hackaboss.travelagency.mapper.FlightMapper;
@@ -93,7 +94,7 @@ public class FlightService implements IFlightService {
         boolean hasBookings = flight.getListFlightBookings().stream()
                 .anyMatch(booking -> booking.getFlight().getId().equals(id));
         if (hasBookings) {
-            return "No se puede eliminar el vuelo, tiene reservas activas.";
+            throw new EntityNotDeletableException("No se puede eliminar el vuelo, tiene reservas activas.");
         }
 
         flight.setActive(false);
