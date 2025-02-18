@@ -143,4 +143,15 @@ public class HotelService implements IHotelService {
         hotelRepository.save(hotel);
         return "Hotel eliminado con éxito";
     }
+
+    @Override
+    public Hotel findActiveHotelByCode(String hotelCode) {
+        return hotelRepository.findByHotelCodeAndActiveTrue(hotelCode)
+                .orElse(null);
+    }
+
+    @Override
+    public Hotel save(Hotel hotel) {
+        return hotelRepository.save(hotel);
+    }
 }

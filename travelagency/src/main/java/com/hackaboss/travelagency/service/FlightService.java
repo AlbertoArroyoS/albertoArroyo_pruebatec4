@@ -135,4 +135,21 @@ public class FlightService implements IFlightService {
                 .toList();
     }
 
+    @Override
+    public Flight findActiveFlight(FlightDTORequest flightDTO) {
+        if (flightDTO.getId() != null) {
+            return flightRepository.findByIdAndActiveTrue(flightDTO.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
+        } else {
+            return flightRepository.findByFlightNumberAndActiveTrue(flightDTO.getFlightNumber())
+                    .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
+        }
+    }
+
+    @Override
+    public Flight save(Flight flight) {
+        return flightRepository.save(flight);
+    }
+
+
 }

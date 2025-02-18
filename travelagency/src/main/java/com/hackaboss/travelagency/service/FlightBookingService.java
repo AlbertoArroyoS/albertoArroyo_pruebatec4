@@ -20,44 +20,28 @@ import java.util.List;
 @Service
 public class FlightBookingService implements IFlightBookingService {
 
-    private final FlightRepository flightRepository;
-    private final UserRepository userRepository;
+    private final IFlightService flightService;
+    private final IUserService userService;
     private final FlightBookingRepository flightBookingRepository;
     private final FlightBookingMapper flightBookingMapper;
 
-    public FlightBookingService(FlightRepository flightRepository, UserRepository userRepository, FlightBookingRepository flightBookingRepository, FlightBookingMapper flightBookingMapper) {
-        this.flightRepository = flightRepository;
-        this.userRepository = userRepository;
+    public FlightBookingService(IFlightService flightService, IUserService userService, FlightBookingRepository flightBookingRepository, FlightBookingMapper flightBookingMapper) {
+        this.flightService = flightService;
+        this.userService = userService;
         this.flightBookingRepository = flightBookingRepository;
         this.flightBookingMapper = flightBookingMapper;
     }
+
     @Override
     @Transactional
     public String bookFlight(FlightBookingRequestDTO request) {
-        Flight flight;
-        if (request.getFlight().getId() != null) {
-            flight = flightRepository.findByIdAndActiveTrue(request.getFlight().getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
-        } else {
-            flight = flightRepository.findByFlightNumberAndActiveTrue(request.getFlight().getFlightNumber())
-                    .orElseThrow(() -> new EntityNotFoundException("Vuelo no encontrado"));
-        }
+        Flight flight = flightService.findActiveFlight(request.getFlight());
 
         // Procesar los pasajeros
         List<User> passengers = new ArrayList<>();
-        for (UserDTORequest passengerDTO : request.getPassengers()) {
-            User passenger = userRepository.findByDni(passengerDTO.getDni())
-                    .orElseGet(() -> {
-                        User newUser = User.builder()
-                                .dni(passengerDTO.getDni())
-                                .username(passengerDTO.getDni())
-                                .name(passengerDTO.getName())
-                                .surname(passengerDTO.getSurname())
-                                .phone(passengerDTO.getPhone())
-                                .build();
-                        return userRepository.save(newUser);
-                    });
-            passengers.add(passenger);
+        for (UserDTORequest hostDTO : request.getPassengers()) {
+            User host = userService.findOrCreateUserByDni(hostDTO);
+            passengers.add(host);
         }
 
         // Verificar si ya existe una reserva activa para este vuelo y estos pasajeros
@@ -72,9 +56,9 @@ public class FlightBookingService implements IFlightBookingService {
         booking.setPassengers(passengers);
         booking = flightBookingRepository.save(booking);
 
-        flightRepository.save(flight);
+        flightService.save(flight);
 
-        Double totalAmount = flight.getRatePerPerson() * passengers.size();
+        double totalAmount = flight.getRatePerPerson() * passengers.size();
         return "Reserva de vuelo creada correctamente con ID: " + booking.getId() + ", Monto total: " + totalAmount;
     }
 

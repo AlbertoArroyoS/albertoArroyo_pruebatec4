@@ -24,16 +24,16 @@ public class HotelBookingService implements IHotelBookingService {
 
     private final HotelBookingMapper hotelBookingMapper;
     private final HotelBookingRepository hotelBookingRepository;
-    private final HotelRepository hotelRepository;
-    private final UserRepository userRepository;
+    private final IHotelService hotelService;
+    private final IUserService userService;
 
-
-    public HotelBookingService(HotelBookingMapper hotelBookingMapper, HotelBookingRepository hotelBookingRepository, HotelRepository hotelRepository, UserRepository userRepository) {
+    public HotelBookingService(HotelBookingMapper hotelBookingMapper, HotelBookingRepository hotelBookingRepository, IHotelService hotelService, IUserService userService) {
         this.hotelBookingMapper = hotelBookingMapper;
         this.hotelBookingRepository = hotelBookingRepository;
-        this.hotelRepository = hotelRepository;
-        this.userRepository = userRepository;
+        this.hotelService = hotelService;
+        this.userService = userService;
     }
+
 
     @Override
     @Transactional
@@ -52,8 +52,10 @@ public class HotelBookingService implements IHotelBookingService {
             throw new InvalidDataException("Los datos de la reserva no pueden ser nulos.");
         }
         //Comprobar si el hotel existe
-        Hotel hotelEntity = hotelRepository.findByHotelCodeAndActiveTrue(dto.getHotel().getHotelCode())
-                        .orElseThrow(() -> new EntityNotFoundException("Hotel no encontrado"));
+        Hotel hotelEntity = hotelService.findActiveHotelByCode(dto.getHotel().getHotelCode());
+        if (hotelEntity == null) {
+            throw new EntityNotFoundException("No existe el hotel con código: " + dto.getHotel().getHotelCode());
+        }
 
         //Comprobar si existe por existsByHotelAndDateFromAndDateToAndActiveTrue
         boolean existHotel = hotelBookingRepository.existsByHotelAndDateFromAndDateToAndActiveTrue(hotelEntity, dto.getHotel().getDateFrom(), dto.getHotel().getDateTo());
@@ -70,17 +72,7 @@ public class HotelBookingService implements IHotelBookingService {
 
         List<User> hostEntities = new ArrayList<>();
         for (UserDTORequest hostDTO : dto.getHosts()) {
-            User host = userRepository.findByDni(hostDTO.getDni())
-                    .orElseGet(() -> {
-                        User newUser = User.builder()
-                                .name(hostDTO.getName())
-                                .surname(hostDTO.getSurname())
-                                .phone(hostDTO.getPhone())
-                                .dni(hostDTO.getDni())
-                                .username(hostDTO.getDni())
-                                .build();
-                        return userRepository.save(newUser);
-                    });
+            User host = userService.findOrCreateUserByDni(hostDTO);
             hostEntities.add(host);
         }
 
@@ -90,7 +82,7 @@ public class HotelBookingService implements IHotelBookingService {
         booking = hotelBookingRepository.save(booking);
 
         hotelEntity.setBooked(Booked.SI);
-        hotelRepository.save(hotelEntity);
+        hotelService.save(hotelEntity);
 
         return "Reserva creada correctamente con ID: " + booking.getId();
     }
