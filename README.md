@@ -80,6 +80,8 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 
 ** En el Wiki están todos los Endpoints explicados punto por punto
 
+https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4/wiki/07:-Permitir-la-realizaci%C3%B3n-de-operaciones-de-alta,-baja-y-modificaci%C3%B3n
+
 ### Hoteles
 
 - **Obtener todos los hoteles**  
