@@ -38,8 +38,8 @@ Esta API REST permite la gestión de reservas de hoteles y vuelos para una agenc
 ## Requisitos para la ejecución
 
 1. **Instalar Java 17**
-2. **Instalar Maven**
-3. **Configurar base de datos MySQL**
+2. **Instalar IDE IntelliJ**
+3. **Configurar base de datos MySQL**: nombre de la base de datos **travel_agency**
 4. **Clonar el repositorio**:
    ```bash
    git clone https://github.com/AlbertoArroyoS/albertoArroyo_pruebatec4.git
